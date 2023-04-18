@@ -1,0 +1,1066 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Shad API",
+        "version": "1.0.0",
+        "description": "API for Shad",
+        "contact": {
+            "email": "daniel.tirrier@epitech.eu",
+            "name": "Daniel Tirrier"
+        }
+    },
+    "servers": [
+        {
+            "url": "/"
+        }
+    ],
+    "tags": [
+        {
+            "name": "User",
+            "description": "User APIs"
+        }
+    ],
+    "paths": {
+        "/user/register": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Register a new user",
+                "operationId": "user-register",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DraftUserSchema"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserSchema"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestSchema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/login": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Login a user",
+                "operationId": "user-login",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DraftUserLogin"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "User logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserSchema"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestSchema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/refresh": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Refresh a user token",
+                "operationId": "user-refresh",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DraftRefreshToken"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "User token refreshed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DraftRefreshToken"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestSchema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/routine/get": {
+            "get": {
+                "tags": [
+                    "Routine"
+                ],
+                "summary": "Get all routines",
+                "operationId": "routine-get",
+                "responses": {
+                    "200": {
+                        "description": "Routines found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RoutineSchema"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Routines not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/NotFoundErrorSchema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/routine/add": {
+            "post": {
+                "tags": [
+                    "Routine"
+                ],
+                "summary": "Add a routine",
+                "operationId": "routine-add",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DraftRoutineSchema"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "requestHeader": {
+                    "content": {
+                        "x-api-key": {
+                            "schema": {
+                                "type": "string"
+                            },
+                            "required": true
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Routine added",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RoutineSchema"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestSchema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/routine/cheatDay": {
+            "post": {
+                "tags": [
+                    "Routine"
+                ],
+                "summary": "Complete the routine",
+                "operationId": "routine-cheatday",
+                "responses": {
+                    "200": {
+                        "description": "Routine completed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RoutineSchema"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestSchema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/routine/checkTask": {
+            "post": {
+                "tags": [
+                    "Routine"
+                ],
+                "summary": "Check a task",
+                "operationId": "routine-checktask",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DraftCheckTaskSchema"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Task completed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RoutineSchema"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestSchema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/rewards/": {
+            "post": {
+                "tags": [
+                    "Rewards"
+                ],
+                "summary": "Add a reward",
+                "operationId": "routine-add",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DraftRewardSchema"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "requestHeader": {
+                    "content": {
+                        "x-api-key": {
+                            "schema": {
+                                "type": "string"
+                            },
+                            "required": true
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Routine added",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RewardSchema"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestSchema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/rewards": {
+            "get": {
+                "tags": [
+                    "Rewards"
+                ],
+                "summary": "Get rewards",
+                "operationId": "rewards-get",
+                "responses": {
+                    "200": {
+                        "description": "Get rewards",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RewardArraySchema"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestSchema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/goals/": {
+            "post": {
+                "tags": [
+                    "Goals"
+                ],
+                "summary": "Add a goal",
+                "operationId": "goal-add",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DraftGoalSchema"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "requestHeader": {
+                    "content": {
+                        "x-api-key": {
+                            "schema": {
+                                "type": "string"
+                            },
+                            "required": true
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Routine added",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GoalSchema"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestSchema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/goals": {
+            "get": {
+                "tags": [
+                    "Goals"
+                ],
+                "summary": "Get goals",
+                "operationId": "goals-get",
+                "responses": {
+                    "200": {
+                        "description": "Get goals",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GoalArraySchema"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestSchema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    },
+    "components": {
+        "schemas": {
+            "BadRequestSchema": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "PATH: [author] ;; MESSAGE: \"author\" is required"
+                    }
+                },
+                "required": [
+                    "error"
+                ]
+            },
+            "ServerErrorSchema": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Internal server error"
+                    }
+                },
+                "required": [
+                    "error"
+                ]
+            },
+            "NotFoundErrorSchema": {
+                "type": "object",
+                "properties": {
+                    "error": {
+                        "type": "string",
+                        "description": "Error message",
+                        "example": "Item not found"
+                    }
+                },
+                "required": [
+                    "error"
+                ]
+            },
+            "DraftUserSchema": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string",
+                        "description": "Username",
+                        "example": "danyDan93"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Name",
+                        "example": "Daniel"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Password",
+                        "example": "password"
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "Email",
+                        "example": "daniel.tirrier@epitech.eu"
+                    },
+                    "genre": {
+                        "type": "string",
+                        "description": "Genre",
+                        "example": "M"
+                    },
+                    "birthDate": {
+                        "type": "string",
+                        "description": "Birth date",
+                        "example": "1993-03-03"
+                    }
+                }
+            },
+            "UserSchema": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Message",
+                        "example": "Success"
+                    },
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "description": "User ID",
+                                "example": "5e9f9b9b9b9b9b9b9b9b9b9b"
+                            },
+                            "username": {
+                                "type": "string",
+                                "description": "Username",
+                                "example": "danyDan93"
+                            },
+                            "name": {
+                                "type": "string",
+                                "description": "Name",
+                                "example": "Daniel"
+                            },
+                            "email": {
+                                "type": "string",
+                                "description": "Email",
+                                "example": "daniel.tirrier@epitech.eu"
+                            },
+                            "genre": {
+                                "type": "string",
+                                "description": "Genre",
+                                "example": "M"
+                            },
+                            "birthDate": {
+                                "type": "string",
+                                "description": "Birth date",
+                                "example": "1993-03-03"
+                            },
+                            "createdAt": {
+                                "type": "string",
+                                "description": "Creation date",
+                                "example": "2020-04-20T15:00:00.000Z"
+                            },
+                            "updatedAt": {
+                                "type": "string",
+                                "description": "Update date",
+                                "example": "2020-04-20T15:00:00.000Z"
+                            },
+                            "refreshToken": {
+                                "type": "string",
+                                "description": "Refresh token"
+                            }
+                        }
+                    },
+                    "token": {
+                        "type": "string",
+                        "description": "Token"
+                    }
+                }
+            },
+            "DraftUserLogin": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "Email",
+                        "example": "daniel.tirrier@epitech.eu"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Password",
+                        "example": "password"
+                    }
+                }
+            },
+            "DraftRefreshToken": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "description": "Access token"
+                    },
+                    "refreshToken": {
+                        "type": "string",
+                        "description": "Refresh token"
+                    }
+                }
+            },
+            "DraftRoutineSchema": {
+                "type": "object",
+                "properties": {
+                    "deadline": {
+                        "type": "string",
+                        "description": "Deadline",
+                        "example": "2020-04-20T15:00:00.000Z"
+                    },
+                    "cheatDay": {
+                        "type": "boolean",
+                        "description": "Cheat day",
+                        "example": false
+                    },
+                    "finishedAt": {
+                        "type": "string",
+                        "description": "Finished at",
+                        "example": "2020-04-20T15:00:00.000Z"
+                    },
+                    "completed": {
+                        "type": "boolean",
+                        "description": "Completed",
+                        "example": false
+                    },
+                    "tasks": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "description": "Name",
+                                    "example": "Push ups"
+                                },
+                                "score": {
+                                    "type": "number",
+                                    "description": "Score",
+                                    "example": 10
+                                },
+                                "completed": {
+                                    "type": "boolean",
+                                    "description": "Completed",
+                                    "example": false
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "RoutineSchema": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Message",
+                        "example": "Success"
+                    },
+                    "routine": {
+                        "type": "object",
+                        "properties": {
+                            "deadline": {
+                                "type": "string",
+                                "description": "Deadline",
+                                "example": "2020-04-20T15:00:00.000Z"
+                            },
+                            "completed": {
+                                "type": "boolean",
+                                "description": "Completed",
+                                "example": false
+                            },
+                            "cheatDay": {
+                                "type": "boolean",
+                                "description": "Cheat day",
+                                "example": false
+                            },
+                            "finishedAt": {
+                                "type": "string",
+                                "description": "Finished at",
+                                "example": "2020-04-20T15:00:00.000Z"
+                            },
+                            "tasks": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "title": {
+                                            "type": "string",
+                                            "description": "Name",
+                                            "example": "Push ups"
+                                        },
+                                        "score": {
+                                            "type": "number",
+                                            "description": "Score",
+                                            "example": 10
+                                        },
+                                        "completed": {
+                                            "type": "boolean",
+                                            "description": "Completed",
+                                            "example": false
+                                        },
+                                        "user": {
+                                            "type": "string",
+                                            "description": "User ID",
+                                            "example": "5e9f9b9b9b9b9b9b9b9b9b9b"
+                                        },
+                                        "createdAt": {
+                                            "type": "string",
+                                            "description": "Creation date",
+                                            "example": "2020-04-20T15:00:00.000Z"
+                                        },
+                                        "updatedAt": {
+                                            "type": "string",
+                                            "description": "Update date",
+                                            "example": "2020-04-20T15:00:00.000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "DraftCheckTaskSchema": {
+                "type": "object",
+                "properties": {
+                    "completed": {
+                        "type": "boolean",
+                        "description": "Completion status",
+                        "example": false
+                    },
+                    "taskId": {
+                        "type": "number",
+                        "description": "Task Identifier",
+                        "example": "987499374857294"
+                    }
+                }
+            },
+            "DraftRewardSchema": {
+                "type": "array",
+                "items": {
+                    "properties": {
+                        "reccurence": {
+                            "type": "string",
+                            "description": "reccurence",
+                            "example": "2020-04-20T15:00:00.000Z"
+                        },
+                        "reward_content": {
+                            "type": "string",
+                            "description": "Content of the reward",
+                            "example": "Une belle bite"
+                        }
+                    }    
+                }
+            },
+            "RewardSchema": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Message",
+                        "example": "Success"
+                    },
+                    "reward": {
+                        "type": "object",
+                        "properties": {
+                            "reccurence": {
+                                "type": "string",
+                                "description": "reccurence",
+                                "example": "2020-04-20T15:00:00.000Z"
+                            },
+                            "reward_content": {
+                                "type": "string",
+                                "description": "Content of the reward",
+                                "example": "Une belle bite"
+                            },
+                            "_id": {
+                                "type": "string",
+                                "description": "ID",
+                                "example": "5e9f9b9b9b9b9b9b9b9b9b9b"
+                            },
+                            "user": {
+                                "type": "string",
+                                "description": "User ID",
+                                "example": "5e9f9b9b9b9b9b9b9b9b9b9b"
+                            }
+                        }
+                    }
+                }
+            },
+            "RewardArraySchema": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Message",
+                        "example": "Success"
+                    },
+                    "reward": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "reccurence": {
+                                    "type": "string",
+                                    "description": "reccurence",
+                                    "example": "2020-04-20T15:00:00.000Z"
+                                },
+                                "reward_content": {
+                                    "type": "string",
+                                    "description": "Content of the reward",
+                                    "example": "Une belle bite"
+                                },
+                                "_id": {
+                                    "type": "string",
+                                    "description": "ID",
+                                    "example": "5e9f9b9b9b9b9b9b9b9b9b9b"
+                                },
+                                "user": {
+                                    "type": "string",
+                                    "description": "User ID",
+                                    "example": "5e9f9b9b9b9b9b9b9b9b9b9b"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "DraftGoalSchema": {
+                "type": "array",
+                "items": {
+                    "properties": {
+                        "reccurence": {
+                            "type": "string",
+                            "description": "reccurence",
+                            "example": "2020-04-20T15:00:00.000Z"
+                        },
+                        "goal_content": {
+                            "type": "string",
+                            "description": "Content of the goal",
+                            "example": "Sucer une énorme bite"
+                        }
+                    }    
+                }
+            },
+            "GoalSchema": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Message",
+                        "example": "Success"
+                    },
+                    "goal": {
+                        "type": "object",
+                        "properties": {
+                            "reccurence": {
+                                "type": "string",
+                                "description": "reccurence",
+                                "example": "2020-04-20T15:00:00.000Z"
+                            },
+                            "goal_content": {
+                                "type": "string",
+                                "description": "Content of the goal",
+                                "example": "Me faire défoncer"
+                            },
+                            "_id": {
+                                "type": "string",
+                                "description": "ID",
+                                "example": "5e9f9b9b9b9b9b9b9b9b9b9b"
+                            },
+                            "user": {
+                                "type": "string",
+                                "description": "User ID",
+                                "example": "5e9f9b9b9b9b9b9b9b9b9b9b"
+                            }
+                        }
+                    }
+                }
+            },
+            "GoalArraySchema": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "Message",
+                        "example": "Success"
+                    },
+                    "goal": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "reccurence": {
+                                    "type": "string",
+                                    "description": "reccurence",
+                                    "example": "2020-04-20T15:00:00.000Z"
+                                },
+                                "goal_content": {
+                                    "type": "string",
+                                    "description": "Content of the goal",
+                                    "example": "Sucer une queue"
+                                },
+                                "_id": {
+                                    "type": "string",
+                                    "description": "ID",
+                                    "example": "5e9f9b9b9b9b9b9b9b9b9b9b"
+                                },
+                                "user": {
+                                    "type": "string",
+                                    "description": "User ID",
+                                    "example": "5e9f9b9b9b9b9b9b9b9b9b9b"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
