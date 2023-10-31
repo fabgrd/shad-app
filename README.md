@@ -21,7 +21,7 @@ A mobile personal development application for Android and iOS that allow the use
 Clone the project
 
 ```bash
-  git clone git@github.com:fabgrd/shad.git
+  git clone git@github.com:fabgrd/shad-app.git
 ```
 
 Go to the project directory
