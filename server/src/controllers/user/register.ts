@@ -39,15 +39,33 @@ const register: RequestHandler = async (req: Request<{}, {}, RegisterReqBody>, r
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = new User({ username, name, email, password: hashedPassword, genre, birthDate, refreshToken: '', streak: 0, currentLeague: 0, achievements: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], previousRoutineEnding: [] });
+    // Create a new user with default values for required fields
+    const user = new User({
+        username,
+        name,
+        email,
+        password: hashedPassword,
+        genre,
+        birthDate,
+        refreshToken: '',
+        streak: 0,
+        currentLeague: 0,
+        achievements: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        previousRoutineEnding: [],
+        leagueScore: 0, // Add leagueScore with a default value
+    });
+
     await user.save();
 
+    // Generate JWT tokens
     const token = sign({ _id: user._id }, process.env.JWT_TOKEN_SECRET ?? '', { expiresIn: '1h' });
     const refreshToken = sign({ _id: user._id }, process.env.JWT_TOKEN_SECRET_REFRESH ?? '', { expiresIn: '1d' });
 
+    // Update the user with the refresh token
     const updatedUser = await User.findOneAndUpdate({ _id: user._id }, { refreshToken: refreshToken }, { new: true });
     await updatedUser?.save();
 
+    // Respond with success message and tokens
     res.send({
         message: 'Success',
         updatedUser: updatedUser?.toJSON(),
@@ -56,4 +74,3 @@ const register: RequestHandler = async (req: Request<{}, {}, RegisterReqBody>, r
 };
 
 export default requestMiddleware(register, { validation: { body: registerSchema } });
-

@@ -14,7 +14,7 @@ const schema = new mongoose_1.Schema({
     refreshToken: { type: String, index: true, required: false },
     routine: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Routine' },
     previousRoutineEnding: { type: [Date], index: true, required: true },
-    leagueScore: { type: Number, index: true, required: true },
+    leagueScore: { type: Number, index: true, required: true, default: 0 },
     goals: { type: [mongoose_1.Schema.Types.ObjectId], ref: 'Goals' },
     rewards: { type: [mongoose_1.Schema.Types.ObjectId], ref: 'Rewards' },
     followers: { type: [mongoose_1.Schema.Types.ObjectId], ref: 'User' },

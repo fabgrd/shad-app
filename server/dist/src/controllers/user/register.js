@@ -39,12 +39,29 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Hash the password
     const salt = yield bcrypt_1.default.genSalt(10);
     const hashedPassword = yield bcrypt_1.default.hash(password, salt);
-    const user = new User_1.default({ username, name, email, password: hashedPassword, genre, birthDate, refreshToken: '', streak: 0, currentLeague: 0, achievements: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], previousRoutineEnding: [] });
+    // Create a new user with default values for required fields
+    const user = new User_1.default({
+        username,
+        name,
+        email,
+        password: hashedPassword,
+        genre,
+        birthDate,
+        refreshToken: '',
+        streak: 0,
+        currentLeague: 0,
+        achievements: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        previousRoutineEnding: [],
+        leagueScore: 0, // Add leagueScore with a default value
+    });
     yield user.save();
+    // Generate JWT tokens
     const token = (0, jsonwebtoken_1.sign)({ _id: user._id }, (_a = process.env.JWT_TOKEN_SECRET) !== null && _a !== void 0 ? _a : '', { expiresIn: '1h' });
     const refreshToken = (0, jsonwebtoken_1.sign)({ _id: user._id }, (_b = process.env.JWT_TOKEN_SECRET_REFRESH) !== null && _b !== void 0 ? _b : '', { expiresIn: '1d' });
+    // Update the user with the refresh token
     const updatedUser = yield User_1.default.findOneAndUpdate({ _id: user._id }, { refreshToken: refreshToken }, { new: true });
     yield (updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.save());
+    // Respond with success message and tokens
     res.send({
         message: 'Success',
         updatedUser: updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.toJSON(),

@@ -624,12 +624,12 @@
                     "username": {
                         "type": "string",
                         "description": "Username",
-                        "example": "danyDan93"
+                        "example": "johndoe01"
                     },
                     "name": {
                         "type": "string",
                         "description": "Name",
-                        "example": "Daniel"
+                        "example": "John"
                     },
                     "password": {
                         "type": "string",
@@ -639,7 +639,7 @@
                     "email": {
                         "type": "string",
                         "description": "Email",
-                        "example": "daniel.tirrier@epitech.eu"
+                        "example": "johndoe@john.com"
                     },
                     "genre": {
                         "type": "string",
