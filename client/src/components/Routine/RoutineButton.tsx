@@ -17,7 +17,7 @@ const RoutineButton = ({ navigation, user }: RoutineButtonProps) => {
 
     completedTaskPercentage = user?.routine?.completed ? 100 : completedTaskPercentage
 
-    console.log('user.routine ', user.routine.completed)
+    // console.log('user.routine ', user.routine.completed)
 
     return (
         <TouchableOpacity
