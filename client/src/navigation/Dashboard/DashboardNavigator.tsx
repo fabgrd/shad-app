@@ -49,7 +49,7 @@ function DashboardNavigator() {
     >
       <DashboardTab.Screen name="LeagueNavigator" component={LeagueNavigator}
         options={{
-          headerTitle: `Hi ${user.name}`,
+          headerTitle: `Hi ${user?.name || 'Undefined guest'}`,
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="trophy" color={color} size={size} />
@@ -58,7 +58,7 @@ function DashboardNavigator() {
       />
       <DashboardTab.Screen name="HomeNavigator" component={HomeNavigator}
         options={{
-          headerTitle: `Hi ${user.name}`,
+          headerTitle: `Hi ${user?.name || 'Undefined guest'}`,
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" color={color} size={size} />
@@ -69,7 +69,7 @@ function DashboardNavigator() {
         name="ProfileNavigator" component={ProfileNavigator}
         options={{
           tabBarShowLabel: false,
-          headerTitle: `Hi ${user.name}`,
+          headerTitle: `Hi ${user?.name || 'Undefined guest'}`,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account" color={color} size={size} />
           ),

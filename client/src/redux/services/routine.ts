@@ -10,7 +10,7 @@ const endpoints = (builder: any) => ({
     }),
     createRoutine: builder.mutation({
         query: (body: any) => ({
-            url: "routine/add",
+            url: "routine/create",
             method: "POST",
             body,
         }),
@@ -32,6 +32,22 @@ const endpoints = (builder: any) => ({
         }),
         providesTags: ["Routine"],
     }),
+    addTasks: builder.mutation({
+        query: (body: any) => ({
+            url: "routine/add",
+            method: "POST",
+            body,
+        }),
+        invalidatesTags: ["Routine"],
+    }),
+    deleteTasks: builder.mutation({
+        query: (body: any) => ({
+            url: "routine/delete",
+            method: "DELETE",
+            body,
+        }),
+        invalidatesTags: ["Routine"],
+    }),
 });
 
 const routineApi = api.injectEndpoints({ endpoints });
@@ -43,6 +59,8 @@ export const {
     useCreateRoutineMutation,
     useCheckTaskMutation,
     useCheatDayMutation,
+    useAddTasksMutation,
+    useDeleteTasksMutation,
 } = routineApi;
 
 export const selectUser = (state: any) => state.api.user;

@@ -50,7 +50,7 @@ export default function StepFive({ navigation }: any) {
     getUser({})
       .unwrap()
       .then((res) => {
-        console.log(res);
+        console.log("Le user est loggé: ",res);
         dispatch({
           type: 'user/setIsLogged',
           payload: true

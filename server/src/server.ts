@@ -11,7 +11,7 @@ import app from './app';
 import SafeMongooseConnection from './lib/safe-mongoose-connection';
 import logger from './logger';
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 let debugCallback;
 if (process.env.NODE_ENV === 'development') {
@@ -46,6 +46,7 @@ const serve = () => app.listen(PORT, () => {
     }
 });
 
+console.log('Mongo URL:', process.env.MONGO_URL);
 if (process.env.MONGO_URL == null) {
     logger.error('MONGO_URL not specified in environment', new Error('MONGO_URL not specified in environment'));
     process.exit(1);

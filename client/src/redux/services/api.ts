@@ -17,6 +17,7 @@ const baseQuery = fetchBaseQuery({
     // If we have a token set in state, let's assume that we should be passing it.
     if (token) {
       headers.set("x-auth-token", `${token}`);
+      console.log("Auth token", token);
     }
     return headers;
   },

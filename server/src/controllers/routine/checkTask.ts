@@ -21,77 +21,55 @@ const checkTask: RequestHandler = async (req: Request<{}, {}, checkTaskBody>, re
     console.log('completed', completed);
     console.log('taskId', taskId);
 
+    // Trouver l'utilisateur
     const user = await User.findOne({ _id: req?.user?._id });
-
-    console.log('req?.user?._id', req?.user?._id);
-
-    console.log('user', user);
-
     if (!user) {
         return res.status(400).send({
             error: 'User not found'
         });
     }
 
-    if (!user.routine) {
-        return res.status(400).send({
-            error: 'Routine not found'
-        });
-    }
-
-    const userRoutine = await Routine.findOne({ _id: user.routine });
-
+    // Trouver la routine de l'utilisateur
+    const userRoutine = await Routine.findOne({ _id: user.routine }).populate('tasks');
     if (!userRoutine) {
         return res.status(400).send({
             error: 'Routine not found'
         });
     }
 
-    const getRoutine = await Routine.findOne({ _id: user.routine }).populate('tasks');
+    console.log('userRoutine', userRoutine);
+    console.log('userRoutine.tasks', userRoutine.tasks);
 
-    if (!getRoutine) {
-        return res.status(400).send({
-            error: 'Routine not found'
-        });
-    }
-
-    console.log('getRoutine', getRoutine);
-    console.log('getRoutine.tasks', getRoutine.tasks);
-
-    // task._id => _id: new ObjectId("640b08d81c1c216b3f488ac0"),
-
-    const task = getRoutine.tasks.find((task) => task._id.toString() === taskId);
-
+    // Trouver la tâche à mettre à jour
+    const task = userRoutine.tasks.find((task) => task._id.toString() === taskId);
     if (!task) {
         return res.status(400).send({
             error: 'Task not found'
         });
     }
 
-    // Check if all tasks are completed
-    const allTasksCompleted = getRoutine.tasks.every((task) => task.completed);
+    // Mettre à jour le statut de la tâche
+    task.completed = completed;
 
+    // Sauvegarder la tâche
+    await userRoutine.save();
+
+    // Vérifier si toutes les tâches sont complètes
+    const allTasksCompleted = userRoutine.tasks.every((task) => task.completed);
     if (allTasksCompleted) {
-        getRoutine.completed = allTasksCompleted;
+        userRoutine.completed = allTasksCompleted;
 
+        // Mettre à jour l'utilisateur
         user.previousRoutineEnding.push(new Date());
         user.streak += 1;
         user.achievements[1] += 1;
         user.leagueScore += 10;
 
-        await getRoutine.save();
         await user.save();
-
-        return res.status(400).send({
-            error: 'All tasks are completed'
-        });
     }
 
-    task.completed = completed;
-
-    await task.save();
-
-    const updatedUser = await User.findOneAndUpdate({ _id: user._id })
+    // Renvoi de la réponse avec les informations mises à jour
+    const updatedUser = await User.findOne({ _id: user._id })
         .populate({
             path: 'routine',
             populate: {
@@ -99,12 +77,8 @@ const checkTask: RequestHandler = async (req: Request<{}, {}, checkTaskBody>, re
                 model: 'RoutineTasks'
             }
         })
-        .populate({
-            path: 'goals'
-        })
-        .populate({
-            path: 'rewards'
-        })
+        .populate('goals')
+        .populate('rewards');
 
     res.send({
         message: 'Success',

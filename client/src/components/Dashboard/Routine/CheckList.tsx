@@ -1,8 +1,10 @@
-import { View, Text, ImageBackground } from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 // Components
-import Section from '../../../components/Dashboard/Section'
+import Section from '../../../components/Dashboard/Section';
+// import AddTasks from '../../../View/Dashboard/AddTasks';
 
 // Moment
 import Moment from 'react-moment';
@@ -11,106 +13,122 @@ import Moment from 'react-moment';
 import colors from '../../../styles/colors';
 
 // Checkboxes
-import BouncyCheckbox from "react-native-bouncy-checkbox";
+import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import type { RoutineTask } from '../../../types/RoutineTask';
 
 // Redux
 import { useCheckTaskMutation } from '../../../redux/services/routine';
 
+// Assume this is a custom button component
+import Button from '../../Misc/Button';
+
 type CheckListProps = {
-  taskList: RoutineTask[]
-}
+  taskList: RoutineTask[];
+};
 
 const CheckList = ({ taskList }: CheckListProps) => {
-  const currentDay = <Moment element={Text} format="ddd DD MMM">{new Date()}</Moment>
-  const { LIGHT_BLUE } = colors
+  const navigation = useNavigation();
+  const currentDay = <Moment element={Text} format="ddd DD MMM">{new Date()}</Moment>;
+  const { LIGHT_BLUE } = colors;
 
   const [checkTask] = useCheckTaskMutation();
 
   return (
-    <Section
-      title="Routine Check-list"
-    >
-      <View
-        style={{
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          marginTop: 10,
-          width: '100%'
-        }}
-      >
-        <Text
-          style={{
-            color: LIGHT_BLUE,
-            fontSize: 20,
-            fontWeight: 'bold',
-            textAlign: 'center'
-          }}
-        >{currentDay}</Text>
-        {taskList?.map((task, index) => {
-          return (
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                width: '100%',
-                marginBottom: 10,
-              }}
-              key={index}>
-              <View
-                style={{
-                  marginTop: 10,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: 'bold',
-                    textAlign: 'center'
-                  }}
-                >
-                  {task.title}
-                </Text>
-                <Text
-                  style={{
-                    color: LIGHT_BLUE,
-                    fontFamily: 'Roboto-Bold',
-                    marginLeft: 5
-                  }}
-                >
-                  +{task.score}
-                </Text>
-              </View>
-              <BouncyCheckbox
-                size={25}
-                fillColor={LIGHT_BLUE}
-                disabled={task.completed}
-                isChecked={task?.completed}
-                unfillColor="white"
-                iconStyle={{ borderColor: "red" }}
-                innerIconStyle={{ borderWidth: 2 }}
-                textStyle={{ fontFamily: "Roboto" }}
-                onPress={(isChecked: boolean) => {
-                  checkTask({
-                    taskId: (task as any)._id,
-                    completed: isChecked
-                  }).unwrap()
-                    .then(() => console.log('Task checked'))
-                    .catch((err) => console.log('Error while checking task: ', err))
-                }}
-              />
+    <Section title="Routine Check-list sperme">
+      <View style={styles.container}>
+        <Text style={styles.dateText}>{currentDay}</Text>
+        {taskList?.map((task, index) => (
+          <View style={styles.taskContainer} key={index}>
+            <View style={styles.taskInfo}>
+              <Text style={styles.taskTitle}>{task.title}</Text>
+              <Text style={styles.taskScore}>+{task.score}</Text>
             </View>
-          )
-        })
-        }
+            <BouncyCheckbox
+              size={25}
+              fillColor={LIGHT_BLUE}
+              disabled={task.completed}
+              isChecked={task?.completed}
+              unfillColor="white"
+              iconStyle={{ borderColor: 'red' }}
+              innerIconStyle={{ borderWidth: 2 }}
+              textStyle={{ fontFamily: 'Roboto' }}
+              onPress={(isChecked: boolean) => {
+                checkTask({
+                  taskId: (task as any)._id,
+                  completed: isChecked,
+                })
+                  .unwrap()
+                  .then(() => console.log('Task checked'))
+                  .catch((err) => console.log('Error while checking task: ', err));
+              }}
+            />
+          </View>
+        ))}
+        {/* Add Task Button */}
+        <View
+          style={{
+            width: '100%',
+            alignItems: 'center',
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+          }}
+        >
+          <Button
+            primary={false}
+            style={{ width: '45%' }}
+            onClick={() => navigation.navigate('AddTasks', { screen: 'AddTasks' })}
+          >
+            Add my own template
+          </Button>
+        </View>
       </View>
     </Section>
-  )
-}
+  );
+};
 
-export default CheckList
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginTop: 10,
+    width: '100%',
+  },
+  dateText: {
+    color: colors.LIGHT_BLUE,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  taskContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 10,
+  },
+  taskInfo: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  taskTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  taskScore: {
+    color: colors.LIGHT_BLUE,
+    fontFamily: 'Roboto-Bold',
+    marginLeft: 5,
+  },
+  addButton: {
+    marginTop: 20,
+    width: '45%',
+    alignItems: 'center',
+    padding: 10,
+  },
+});
+
+export default CheckList;

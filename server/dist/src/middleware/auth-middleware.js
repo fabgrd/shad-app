@@ -15,23 +15,26 @@ const jsonwebtoken_1 = require("jsonwebtoken");
 const authMiddleware = (handler, options) => (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const token = req.header('x-auth-token');
+    console.log('Token received:', token);
     if (!token) {
         return res.status(401).send('Access Denied');
     }
     try {
         const verified = (0, jsonwebtoken_1.verify)(token, (_a = process.env.JWT_TOKEN_SECRET) !== null && _a !== void 0 ? _a : '');
-        // pass verified user to next handler
+        console.log('Verified payload:', verified);
         req.user = verified;
-        console.log('verified', verified);
+        console.log('User attached to request:', req.user);
         if ((_b = options === null || options === void 0 ? void 0 : options.validation) === null || _b === void 0 ? void 0 : _b.body) {
             const { error } = options.validation.body.validate(req.body);
             if (error) {
+                console.log('Validation error:', error.details[0].message);
                 return res.status(400).send(error.details[0].message);
             }
         }
         return handler(req, res, next);
     }
     catch (err) {
+        console.error('Token verification error:', err);
         res.status(400).send('Invalid Token');
     }
 });

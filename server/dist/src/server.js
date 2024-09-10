@@ -14,7 +14,7 @@ const util_1 = __importDefault(require("util"));
 const app_1 = __importDefault(require("./app"));
 const safe_mongoose_connection_1 = __importDefault(require("./lib/safe-mongoose-connection"));
 const logger_1 = __importDefault(require("./logger"));
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 let debugCallback;
 if (process.env.NODE_ENV === 'development') {
     debugCallback = (collectionName, method, query, doc) => {
@@ -44,6 +44,7 @@ const serve = () => app_1.default.listen(PORT, () => {
         logger_1.default.info(`⚙️  Swagger UI hosted at http://localhost:${PORT}/dev/api-docs`);
     }
 });
+console.log('Mongo URL:', process.env.MONGO_URL);
 if (process.env.MONGO_URL == null) {
     logger_1.default.error('MONGO_URL not specified in environment', new Error('MONGO_URL not specified in environment'));
     process.exit(1);

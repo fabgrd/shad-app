@@ -9,6 +9,7 @@ export interface IRoutineTasks extends Document {
     score: number;
     completed: boolean;
     user: string;
+    routine: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -19,6 +20,7 @@ const schema = new Schema<IRoutineTasks>({
     title: { type: String, index: true, required: true },
     score: { type: Number, index: true, required: true },
     user: { type: String, index: true, required: true },
+    routine: { type: String, index: true, required: true },
     completed: { type: Boolean, index: true, required: true }
 }, { timestamps: true });
 

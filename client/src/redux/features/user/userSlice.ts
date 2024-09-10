@@ -3,12 +3,32 @@ import userApi from "../../services/auth";
 import authApi from "../../services/auth";
 import routineApi from "../../services/routine";
 import { PURGE } from "redux-persist";
+import { RoutineTask } from "../../../types/RoutineTask";
 
 // MOCK_USER
 import MOCK_USER from "../../../MOCK/Dashboard/MOCK_USER";
 
-const initialState = {
-  user: MOCK_USER,
+interface UserState {
+  user: {
+    _id: string;
+    username: string;
+    name: string;
+    email: string;
+    tasks: RoutineTask[];
+  };
+  accessToken: string | null;
+  refreshToken: string | null;
+  isLogged: boolean;
+}
+
+const initialState: UserState = {
+  user: {
+    _id: '', // Assure-toi que ce sont des valeurs valides
+    username: '',
+    name: '',
+    email: '',
+    tasks: [],
+  },
   accessToken: null,
   refreshToken: null,
   isLogged: false,
@@ -27,7 +47,10 @@ export const userSlice = createSlice({
     },
     setIsLogged: (state, action) => {
       state.isLogged = action.payload;
-    }
+    },
+    updateTasks: (state, action) => {
+      state.user.tasks = action.payload;
+  },
   },
   extraReducers: (builder) => {
     builder
@@ -70,6 +93,16 @@ export const userSlice = createSlice({
         const user = action?.payload;
         state.user = user?.updatedUser;
       })
+      .addMatcher(routineApi.endpoints.addTasks.matchFulfilled, (state: any, action: { payload: any }) => {
+        const user = action?.payload;
+        state.user = user?.updatedUser;
+        state.user.tasks = action.payload.tasks;
+      })
+      .addMatcher(routineApi.endpoints.deleteTasks.matchFulfilled, (state: any, action: { payload: any }) => {
+        const user = action?.payload;
+        state.user = user?.updatedUser;
+        state.user.tasks = action.payload.tasks;
+      });
   },
 });
 

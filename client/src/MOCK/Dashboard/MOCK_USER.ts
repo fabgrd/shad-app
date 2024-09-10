@@ -30,6 +30,7 @@ const MOCK_USER: User = {
     previousRoutineEnding: MOCK_PREVIOUS_ROUTINES,
     goals: MOCK_GOALS,
     rewards: MOCK_REWARDS,
+    
 }
 
 export default MOCK_USER;

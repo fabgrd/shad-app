@@ -43,7 +43,9 @@ router.post('/user/login', UserController.login);
 router.post('/user/refresh', UserController.refresh);
 router.post('/user/', UserController.getUser);
 // routine routes
-router.post('/routine/add', RoutineController.add);
+router.post('/routine/add', RoutineController.addTasks);
+router.post('/routine/delete', RoutineController.deleteTasks);
+router.post('/routine/create', RoutineController.create);
 router.get('/routine', RoutineController.get);
 router.post('/routine/cheat', RoutineController.cheatDay);
 router.post('/routine/check', RoutineController.checkTask);
