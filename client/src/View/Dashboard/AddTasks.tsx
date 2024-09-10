@@ -19,7 +19,6 @@ export default function AddTasks({ navigation }: any) {
     'I worked 25mn continuously on',
   ]);
   const [time, setTime] = useState(new Date());
-  const [notification, setNotification] = useState(false);
   const dispatch = useDispatch();
 
   // Utilisation des mutations pour ajouter et supprimer des tâches
@@ -44,14 +43,10 @@ export default function AddTasks({ navigation }: any) {
           type: 'user/updateTasks',
           payload: tasksToAdd
         })
-        console.log("DISPATCH A JOUR POUR:", tasksToAdd);
-        
-        // Navigation vers un autre écran si nécessaire
       })
       .catch(err => {
         console.log('Error adding tasks:', err);
       });
-      
       navigation.navigate('HomeNavigator', { screen: "DailyRoutine" })
   };
 
@@ -71,7 +66,7 @@ export default function AddTasks({ navigation }: any) {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.title}>Add activities to your routine</Text>
+            <Text style={styles.title}>Modify your routine</Text>
           </View>
           <View style={styles.formContainer}>
             <View style={styles.content}>
@@ -95,18 +90,9 @@ export default function AddTasks({ navigation }: any) {
                   />
                 </View>
               </View>
-              <View style={styles.notificationSwitch}>
-                <Text style={{ fontWeight: "bold" }}>Allow notifications</Text>
-                <Switch
-                  trackColor={{ false: '#767577', true: '#1DA0FF66' }}
-                  thumbColor={notification ? 'black' : '#f4f3f4'}
-                  onValueChange={setNotification}
-                  value={notification}
-                />
-              </View>
             </View>
           </View>
-          <Button
+          <Button style={styles.button}
             onClick={handleAddTasksCompletion}
             disabled={chipList.length === 0}
           >
@@ -126,5 +112,5 @@ const styles = StyleSheet.create({
   formContainer: { height: '75%', justifyContent: 'space-between' },
   content: { flexDirection: 'column', justifyContent: 'space-between', width: '100%', height: '100%' },
   timeSelector: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', padding: 10 },
-  notificationSwitch: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 10 },
+  button: { flex: 1, flexDirection: 'row', alignItems: 'center', paddingTop: 30 }
 });

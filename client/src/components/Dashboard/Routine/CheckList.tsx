@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 
 // Components
 import Section from '../../../components/Dashboard/Section';
-// import AddTasks from '../../../View/Dashboard/AddTasks';
+import AddTasks from '../../../View/Dashboard/AddTasks';
 
 // Moment
 import Moment from 'react-moment';
@@ -34,7 +34,7 @@ const CheckList = ({ taskList }: CheckListProps) => {
   const [checkTask] = useCheckTaskMutation();
 
   return (
-    <Section title="Routine Check-list sperme">
+    <Section title="Routine Check-list">
       <View style={styles.container}>
         <Text style={styles.dateText}>{currentDay}</Text>
         {taskList?.map((task, index) => (
@@ -75,10 +75,10 @@ const CheckList = ({ taskList }: CheckListProps) => {
         >
           <Button
             primary={false}
-            style={{ width: '45%' }}
+            style={{ width: '100%' }}
             onClick={() => navigation.navigate('AddTasks', { screen: 'AddTasks' })}
           >
-            Add my own template
+            Add tasks
           </Button>
         </View>
       </View>

@@ -30,48 +30,62 @@ exports.createSchema = joi_1.default.object().keys({
     })).required()
 });
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     const { deadline, completed, cheatDay, tasks } = req.body;
-    const user = yield User_1.default.findOne({ _id: (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a._id });
-    if (!user) {
-        return res.status(400).send({
-            error: 'User not found'
+    console.log('Request body:', req.body);
+    try {
+        const user = yield User_1.default.findOne({ _id: (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a._id });
+        if (!user) {
+            console.log('User not found:', (_b = req === null || req === void 0 ? void 0 : req.user) === null || _b === void 0 ? void 0 : _b._id);
+            return res.status(400).send({ error: 'User not found' });
+        }
+        if (user.routine) {
+            console.log('Deleting existing routine and tasks for user:', user._id);
+            yield Routine_1.default.deleteOne({ _id: user.routine });
+            yield RoutineTasks_1.default.deleteMany({ user: user._id });
+        }
+        const createTasksAsync = () => __awaiter(void 0, void 0, void 0, function* () {
+            return Promise.all(tasks.map((task) => __awaiter(void 0, void 0, void 0, function* () {
+                console.log('Creating task:', task);
+                const routineTask = new RoutineTasks_1.default({
+                    title: task.title,
+                    score: task.score,
+                    completed: task.completed,
+                    user: user._id
+                });
+                const savedRoutineTask = yield routineTask.save();
+                console.log('Saved task:', savedRoutineTask);
+                return savedRoutineTask;
+            })));
+        });
+        yield createTasksAsync();
+        const allRoutineTasks = yield RoutineTasks_1.default.find({ user: user._id });
+        console.log('All routine tasks for user:', allRoutineTasks);
+        const selectAllTasksIdsAsync = () => __awaiter(void 0, void 0, void 0, function* () {
+            return allRoutineTasks.map((task) => task === null || task === void 0 ? void 0 : task._id.toString());
+        });
+        const routine = new Routine_1.default({
+            deadline,
+            completed,
+            cheatDay,
+            tasks: yield selectAllTasksIdsAsync(),
+            user: user._id
+        });
+        console.log('Creating new routine:', routine);
+        const savedRoutine = yield routine.save();
+        console.log('Saved routine:', savedRoutine);
+        const getRoutine = yield Routine_1.default.findOne({ _id: savedRoutine._id }).populate('tasks');
+        console.log('Fetched routine with populated tasks:', getRoutine);
+        yield User_1.default.findOneAndUpdate({ _id: user._id }, { routine: savedRoutine._id });
+        console.log('Updated user with new routine:', user._id);
+        res.send({
+            message: 'Success',
+            routine: getRoutine,
         });
     }
-    if (user.routine) {
-        yield Routine_1.default.deleteOne({ _id: user.routine });
-        yield RoutineTasks_1.default.deleteMany({ user: user._id });
+    catch (error) {
+        console.error('Error creating routine:', error);
+        res.status(500).send({ error: 'An error occurred while creating the routine' });
     }
-    const createTasksAsync = () => __awaiter(void 0, void 0, void 0, function* () {
-        return Promise.all(tasks.map((task) => __awaiter(void 0, void 0, void 0, function* () {
-            const routineTask = new RoutineTasks_1.default({
-                title: task.title,
-                score: task.score,
-                completed: task.completed,
-                user: user._id
-            });
-            const savedRoutineTask = yield routineTask.save();
-            return savedRoutineTask;
-        })));
-    });
-    yield createTasksAsync();
-    const allRoutineTasks = yield RoutineTasks_1.default.find({ user: user._id });
-    const selectAllTasksIdsAsync = () => __awaiter(void 0, void 0, void 0, function* () {
-        return allRoutineTasks.map((task) => task === null || task === void 0 ? void 0 : task._id.toString());
-    });
-    const routine = new Routine_1.default({
-        deadline,
-        completed,
-        cheatDay,
-        tasks: yield selectAllTasksIdsAsync(),
-        user: user._id
-    });
-    const savedRoutine = yield routine.save();
-    const getRoutine = yield Routine_1.default.findOne({ _id: savedRoutine._id }).populate('tasks');
-    yield User_1.default.findOneAndUpdate({ _id: user._id }, { routine: savedRoutine._id });
-    res.send({
-        message: 'Success',
-        routine: getRoutine,
-    });
 });
 exports.default = (0, auth_middleware_1.authMiddleware)((0, request_middleware_1.default)(create, { validation: { body: exports.createSchema } }));
