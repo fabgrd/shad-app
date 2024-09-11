@@ -169,3 +169,6 @@ coverage/
 # Windows system files
 Thumbs.db
 ehthumbs.db
+
+# MongoDB files
+dev/data/mongo/
