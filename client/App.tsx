@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from 'react';
+
+// Fonts
 import * as Font from 'expo-font';
-import { Provider } from 'react-redux';
-import store from './src/redux/store';
+
+// Redux
+import { Provider } from 'react-redux'
+import store from './src/redux/store'
+
+// Redux Persist
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "./src/redux/store";
+
+// Splash Screen
 import * as SplashScreen from 'expo-splash-screen';
+
+// Navigation
 import RouteNavigator from './src/navigation/RouteNavigator';
 
 SplashScreen.preventAutoHideAsync();
+
 
 export default function App() {
   const [appLoaded, setAppLoaded] = useState(false);
@@ -20,15 +31,18 @@ export default function App() {
     'Roboto-ThinItalic': require('./assets/fonts/Roboto-ThinItalic.ttf'),
   };
 
-  async function _loadFontsAsync() {
-    await Font.loadAsync(customFonts);
-    console.log('Fonts loaded');
-    setAppLoaded(true);
+  function _loadFontsAsync() {
+    Font.loadAsync(customFonts)
+      .finally(() => {
+        console.log('Fonts loaded');
+        setAppLoaded(true);
+      }
+      );
   }
 
   useEffect(() => {
     async function loadFonts() {
-      await _loadFontsAsync();
+      _loadFontsAsync()
     }
     loadFonts();
   }, []);
@@ -38,15 +52,6 @@ export default function App() {
       SplashScreen.hideAsync();
     }
   }, [appLoaded]);
-
-  useEffect(() => {
-    // Purger le cache de redux-persist
-    persistor.purge().then(() => {
-      console.log('Cache purged');
-    }).catch((error) => {
-      console.error('Error purging cache:', error);
-    });
-  }, []);
 
   if (!appLoaded) {
     return null;

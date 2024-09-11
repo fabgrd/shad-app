@@ -40,7 +40,7 @@ const endpoints = (builder: any) => ({
         }),
         invalidatesTags: ["Routine"],
     }),
-    deleteTasks: builder.mutation({
+    removeTasks: builder.mutation({
         query: (body: any) => ({
             url: "routine/delete",
             method: "DELETE",
@@ -60,7 +60,7 @@ export const {
     useCheckTaskMutation,
     useCheatDayMutation,
     useAddTasksMutation,
-    useDeleteTasksMutation,
+    useRemoveTasksMutation,
 } = routineApi;
 
 export const selectUser = (state: any) => state.api.user;

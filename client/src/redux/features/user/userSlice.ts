@@ -98,7 +98,7 @@ export const userSlice = createSlice({
         state.user = user?.updatedUser;
         state.user.tasks = action.payload.tasks;
       })
-      .addMatcher(routineApi.endpoints.deleteTasks.matchFulfilled, (state: any, action: { payload: any }) => {
+      .addMatcher(routineApi.endpoints.removeTasks.matchFulfilled, (state: any, action: { payload: any }) => {
         const user = action?.payload;
         state.user = user?.updatedUser;
         state.user.tasks = action.payload.tasks;

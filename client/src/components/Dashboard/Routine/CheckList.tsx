@@ -21,13 +21,14 @@ import { useCheckTaskMutation } from '../../../redux/services/routine';
 
 // Assume this is a custom button component
 import Button from '../../Misc/Button';
+import { NavigationProps } from '../../../types/Props/NavigationProps';
 
 type CheckListProps = {
   taskList: RoutineTask[];
 };
 
 const CheckList = ({ taskList }: CheckListProps) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProps>();
   const currentDay = <Moment element={Text} format="ddd DD MMM">{new Date()}</Moment>;
   const { LIGHT_BLUE } = colors;
 
@@ -76,7 +77,7 @@ const CheckList = ({ taskList }: CheckListProps) => {
           <Button
             primary={false}
             style={{ width: '100%' }}
-            onClick={() => navigation.navigate('AddTasks', { screen: 'AddTasks' })}
+            onClick={() => navigation.navigation.navigate('AddTasks', { screen: 'AddTasks' })}
           >
             Add tasks
           </Button>

@@ -25,27 +25,29 @@ exports.removeTasksSchema = joi_1.default.object().keys({
 const removeTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { tasksToRemove } = req.body;
-    const user = yield User_1.default.findOne({ _id: (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a._id });
-    if (!user) {
-        return res.status(400).send({
-            error: 'User not found'
+    try {
+        const user = yield User_1.default.findOne({ _id: (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a._id });
+        if (!user) {
+            return res.status(400).send({ error: 'User not found' });
+        }
+        const routine = yield Routine_1.default.findOne({ user: user._id }).populate('tasks');
+        if (!routine) {
+            return res.status(400).send({ error: 'Routine not found' });
+        }
+        if (tasksToRemove.length > 0) {
+            yield RoutineTasks_1.default.deleteMany({ _id: { $in: tasksToRemove } });
+            routine.tasks = routine.tasks.filter(task => !tasksToRemove.includes(task._id.toString()));
+            yield routine.save();
+        }
+        const updatedRoutine = yield Routine_1.default.findOne({ _id: routine._id }).populate('tasks');
+        res.send({
+            message: 'Tasks removed successfully',
+            routine: updatedRoutine,
         });
     }
-    const routine = yield Routine_1.default.findOne({ user: user._id }).populate('tasks');
-    if (!routine) {
-        return res.status(400).send({
-            error: 'Routine not found'
-        });
+    catch (error) {
+        console.error('Error in removeTasks controller:', error);
+        res.status(500).send({ error: 'Internal Server Error' });
     }
-    if (tasksToRemove.length > 0) {
-        yield RoutineTasks_1.default.deleteMany({ _id: { $in: tasksToRemove } });
-        routine.tasks = routine.tasks.filter(task => !tasksToRemove.includes(task._id.toString()));
-        yield routine.save();
-    }
-    const updatedRoutine = yield Routine_1.default.findOne({ _id: routine._id }).populate('tasks');
-    res.send({
-        message: 'Tasks removed successfully',
-        routine: updatedRoutine,
-    });
 });
 exports.default = (0, auth_middleware_1.authMiddleware)((0, request_middleware_1.default)(removeTasks, { validation: { body: exports.removeTasksSchema } }));

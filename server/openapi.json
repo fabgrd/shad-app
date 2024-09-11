@@ -215,37 +215,77 @@
                 }
             }
         },
+        "/routine/create": {
+            "post": {
+                "tags": [
+                    "Routine"
+                ],
+                "summary": "Create a new routine",
+                "operationId": "routine-create",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateRoutineRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Routine created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RoutineSchema"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestSchema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },        
         "/routine/add": {
             "post": {
                 "tags": [
                     "Routine"
                 ],
-                "summary": "Add a routine",
+                "summary": "Add tasks to the routine",
                 "operationId": "routine-add",
                 "requestBody": {
+                    "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/DraftRoutineSchema"
+                                "$ref": "#/components/schemas/AddTasksRequest"
                             }
                         }
-                    },
-                    "required": true
-                },
-                "requestHeader": {
-                    "content": {
-                        "x-api-key": {
-                            "schema": {
-                                "type": "string"
-                            },
-                            "required": true
-                        }
-                    },
-                    "required": true
+                    }
                 },
                 "responses": {
                     "200": {
-                        "description": "Routine added",
+                        "description": "Tasks added successfully",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -277,6 +317,57 @@
                 }
             }
         },
+        "/routine/delete": {
+            "delete": {
+                "tags": [
+                    "Routine"
+                ],
+                "summary": "Delete tasks from the routine",
+                "operationId": "routine-delete",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DeleteTasksRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Tasks removed successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RoutineSchema"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BadRequestSchema"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ServerErrorSchema"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },                
         "/routine/cheatDay": {
             "post": {
                 "tags": [
@@ -880,6 +971,95 @@
                     }
                 }
             },
+            "CreateRoutineRequest": {
+                "type": "object",
+                "properties": {
+                    "deadline": {
+                        "type": "string",
+                        "description": "Deadline for the routine",
+                        "example": "2020-04-20T15:00:00.000Z"
+                    },
+                    "completed": {
+                        "type": "boolean",
+                        "description": "Completion status of the routine",
+                        "example": false
+                    },
+                    "cheatDay": {
+                        "type": "boolean",
+                        "description": "Indicates if it is a cheat day",
+                        "example": false
+                    },
+                    "tasks": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "description": "Title of the task",
+                                    "example": "Push ups"
+                                },
+                                "score": {
+                                    "type": "number",
+                                    "description": "Score associated with the task",
+                                    "example": 10
+                                },
+                                "completed": {
+                                    "type": "boolean",
+                                    "description": "Completion status of the task",
+                                    "example": false
+                                }
+                            },
+                            "required": ["title", "score", "completed"]
+                        }
+                    }
+                },
+                "required": ["deadline", "completed", "cheatDay", "tasks"]
+            },
+            "AddTasksRequest": {
+                "type": "object",
+                "properties": {
+                    "tasksToAdd": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "title": {
+                                    "type": "string",
+                                    "description": "Title of the task",
+                                    "example": "Push ups"
+                                },
+                                "score": {
+                                    "type": "number",
+                                    "description": "Score associated with the task",
+                                    "example": 10
+                                },
+                                "completed": {
+                                    "type": "boolean",
+                                    "description": "Completion status of the task",
+                                    "example": false
+                                }
+                            },
+                            "required": ["title", "score", "completed"]
+                        }
+                    }
+                },
+                "required": ["tasksToAdd"]
+            },
+            "DeleteTasksRequest": {
+                "type": "object",
+                "properties": {
+                    "tasksToRemove": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "description": "IDs of the tasks to be removed",
+                            "example": "5e9f9b9b9b9b9b9b9b9b9b9b"
+                        }
+                    }
+                },
+                "required": ["tasksToRemove"]
+            },                                    
             "DraftRewardSchema": {
                 "type": "array",
                 "items": {
