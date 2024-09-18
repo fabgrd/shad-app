@@ -16,7 +16,7 @@ const get: RequestHandler = async (req, res) => {
         });
     }
 
-    const routine = await Routine.find({ user: user?._id }).populate('tasks');
+    const routine = await Routine.find({ user: user?._id });
 
     res.send({
         message: 'Success',

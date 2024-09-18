@@ -48,6 +48,14 @@ const endpoints = (builder: any) => ({
         }),
         invalidatesTags: ["Routine"],
     }),
+    updateRoutine: builder.mutation({
+        query: (body: any) => ({
+            url: "routine/update",
+            method: "PATCH",
+            body,
+        }),
+        invalidatesTags: ["Routine"],
+    }),   
 });
 
 const routineApi = api.injectEndpoints({ endpoints });
@@ -61,6 +69,7 @@ export const {
     useCheatDayMutation,
     useAddTasksMutation,
     useRemoveTasksMutation,
+    useUpdateRoutineMutation,
 } = routineApi;
 
 export const selectUser = (state: any) => state.api.user;

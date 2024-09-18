@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const schema = new mongoose_1.Schema({
-    deadline: { type: Date, index: true, required: true },
+    deadline: { type: String, index: true, required: true },
     completed: { type: Boolean, index: true, required: true },
     cheatDay: { type: Boolean, index: true, required: true },
     finishedAt: { type: Date, index: true, required: false },

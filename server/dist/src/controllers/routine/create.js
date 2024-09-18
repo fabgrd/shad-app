@@ -19,8 +19,9 @@ const auth_middleware_1 = require("../../middleware/auth-middleware");
 const User_1 = __importDefault(require("../../models/User"));
 const Routine_1 = __importDefault(require("../../models/Routine"));
 const RoutineTasks_1 = __importDefault(require("../../models/RoutineTasks"));
+// Schéma de validation
 exports.createSchema = joi_1.default.object().keys({
-    deadline: joi_1.default.date().required(),
+    deadline: joi_1.default.string().pattern(/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/).required(),
     completed: joi_1.default.boolean().required(),
     cheatDay: joi_1.default.boolean().required(),
     tasks: joi_1.default.array().items(joi_1.default.object({
@@ -64,6 +65,7 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const selectAllTasksIdsAsync = () => __awaiter(void 0, void 0, void 0, function* () {
             return allRoutineTasks.map((task) => task === null || task === void 0 ? void 0 : task._id.toString());
         });
+        // Création de la nouvelle routine
         const routine = new Routine_1.default({
             deadline,
             completed,
@@ -76,6 +78,7 @@ const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log('Saved routine:', savedRoutine);
         const getRoutine = yield Routine_1.default.findOne({ _id: savedRoutine._id }).populate('tasks');
         console.log('Fetched routine with populated tasks:', getRoutine);
+        // Mise à jour de l'utilisateur avec la nouvelle routine
         yield User_1.default.findOneAndUpdate({ _id: user._id }, { routine: savedRoutine._id });
         console.log('Updated user with new routine:', user._id);
         res.send({

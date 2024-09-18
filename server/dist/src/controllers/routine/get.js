@@ -24,7 +24,7 @@ const get = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             error: 'User not found'
         });
     }
-    const routine = yield Routine_1.default.find({ user: user === null || user === void 0 ? void 0 : user._id }).populate('tasks');
+    const routine = yield Routine_1.default.find({ user: user === null || user === void 0 ? void 0 : user._id });
     res.send({
         message: 'Success',
         routine

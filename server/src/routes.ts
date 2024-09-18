@@ -26,6 +26,7 @@ router.post('/routine/create', RoutineController.create);
 router.get('/routine', RoutineController.get);
 router.post('/routine/cheat', RoutineController.cheatDay);
 router.post('/routine/check', RoutineController.checkTask);
+router.patch('/routine/update', RoutineController.updateRoutine);
 
 // rewards routes
 router.post('/rewards/', RewardsController.add);

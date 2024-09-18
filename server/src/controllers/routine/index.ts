@@ -4,6 +4,7 @@ import checkTask from "./checkTask";
 import cheatDay from "./cheatDay";
 import addTasks from "./addTasks";
 import removeTasks from "./deleteTasks";
+import updateRoutine from "./updateRoutine";
 
 export {
     create,
@@ -11,5 +12,6 @@ export {
     checkTask,
     cheatDay,
     addTasks,
-    removeTasks
+    removeTasks,
+    updateRoutine
 }

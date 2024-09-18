@@ -54,4 +54,4 @@ setupListeners(store.dispatch);
 export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof rootReducers>;
 export default store;
-// persistor.purge();
+persistor.purge();

@@ -5,9 +5,6 @@ import routineApi from "../../services/routine";
 import { PURGE } from "redux-persist";
 import { RoutineTask } from "../../../types/RoutineTask";
 
-// MOCK_USER
-import MOCK_USER from "../../../MOCK/Dashboard/MOCK_USER";
-
 interface UserState {
   user: {
     _id: string;
@@ -15,6 +12,8 @@ interface UserState {
     name: string;
     email: string;
     tasks: RoutineTask[];
+    goals: any[]; // Ajoutez les autres propriétés nécessaires
+    rewards: any[];
   };
   accessToken: string | null;
   refreshToken: string | null;
@@ -23,11 +22,13 @@ interface UserState {
 
 const initialState: UserState = {
   user: {
-    _id: '', // Assure-toi que ce sont des valeurs valides
+    _id: '',
     username: '',
     name: '',
     email: '',
     tasks: [],
+    goals: [],
+    rewards: [],
   },
   accessToken: null,
   refreshToken: null,
@@ -50,7 +51,7 @@ export const userSlice = createSlice({
     },
     updateTasks: (state, action) => {
       state.user.tasks = action.payload;
-  },
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -102,6 +103,10 @@ export const userSlice = createSlice({
         const user = action?.payload;
         state.user = user?.updatedUser;
         state.user.tasks = action.payload.tasks;
+      })
+      .addMatcher(routineApi.endpoints.updateRoutine.matchFulfilled, (state: any, action: { payload: any }) => {
+        const user = action?.payload;
+        state.user = user?.updatedUser;
       });
   },
 });

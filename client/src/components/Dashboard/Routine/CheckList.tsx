@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import React from 'react';
+import { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 // Components
@@ -18,6 +19,7 @@ import type { RoutineTask } from '../../../types/RoutineTask';
 
 // Redux
 import { useCheckTaskMutation } from '../../../redux/services/routine';
+import { useGetRoutineQuery } from '../../../redux/services/routine';
 
 // Assume this is a custom button component
 import Button from '../../Misc/Button';
@@ -28,16 +30,21 @@ type CheckListProps = {
 };
 
 const CheckList = ({ taskList }: CheckListProps) => {
-  const navigation = useNavigation<NavigationProps>();
+  const navigation = useNavigation<NavigationProps['navigation']>();
   const currentDay = <Moment element={Text} format="ddd DD MMM">{new Date()}</Moment>;
-  const { LIGHT_BLUE } = colors;
+  const { LIGHT_BLUE, LIGHT_BLACK } = colors;
 
+  const { data: routine, isLoading } = useGetRoutineQuery(undefined, {
+    refetchOnReconnect: true,
+    // refetchOnWindowFocus: true,
+    refetchOnMountOrArgChange: true,
+  });
   const [checkTask] = useCheckTaskMutation();
-
+  // const { data: routine, refetch } = useGetRoutineQuery();
   return (
     <Section title="Routine Check-list">
-      <View style={styles.container}>
         <Text style={styles.dateText}>{currentDay}</Text>
+      <View style={styles.container}>
         {taskList?.map((task, index) => (
           <View style={styles.taskContainer} key={index}>
             <View style={styles.taskInfo}>
@@ -76,10 +83,10 @@ const CheckList = ({ taskList }: CheckListProps) => {
         >
           <Button
             primary={false}
-            style={{ width: '100%' }}
-            onClick={() => navigation.navigation.navigate('AddTasks', { screen: 'AddTasks' })}
+            style={styles.modifyButton}
+            onClick={() => navigation.navigate('AddTasks', { screen: 'AddTasks' })}
           >
-            Add tasks
+            Modify tasks
           </Button>
         </View>
       </View>
@@ -96,8 +103,9 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   dateText: {
+    marginTop: -20,
     color: colors.LIGHT_BLUE,
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -115,7 +123,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   taskTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -124,9 +132,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto-Bold',
     marginLeft: 5,
   },
-  addButton: {
-    marginTop: 20,
-    width: '45%',
+  modifyButton: {
+    marginTop: 10,
+    width: '50%',
     alignItems: 'center',
     padding: 10,
   },
