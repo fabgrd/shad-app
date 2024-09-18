@@ -62,7 +62,7 @@ const checkTask: RequestHandler = async (req: Request<{}, {}, checkTaskBody>, re
     // Mettre à jour la routine selon l'état des tâches
     const allTasksCompleted = userRoutine.tasks.every((task: any) => task.completed);
     userRoutine.completed = allTasksCompleted;
-    
+
     try {
         await userRoutine.save(); // Sauvegarde de la routine, peu importe le statut des tâches
         console.log('Routine saved successfully with updated tasks:', userRoutine);
@@ -80,15 +80,6 @@ const checkTask: RequestHandler = async (req: Request<{}, {}, checkTaskBody>, re
         user.streak += 1;
         user.achievements[1] += 1;
         user.leagueScore += 10;
-
-        try {
-            await user.save();
-        } catch (error) {
-            console.error('Error saving user:', error);
-            return res.status(500).send({
-                error: 'Failed to update user'
-            });
-        }
     }
 
     // Renvoi de la réponse avec les informations mises à jour

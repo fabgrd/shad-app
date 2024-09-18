@@ -64,13 +64,35 @@ const addTasks: RequestHandler = async (req: Request<{}, {}, AddTasksReqBody>, r
     routine.tasks.push(...newTasks.map(task => task._id));
     await routine.save();
 
-    // Récupère la routine mise à jour avec les nouvelles tâches
-    const updatedRoutine = await Routine.findOne({ _id: routine._id }).populate('tasks');
+    try {
+        const updatedUser = await User.findById(user._id)
+            .populate({
+                path: 'routine',
+                populate: {
+                    path: 'tasks',
+                    model: 'RoutineTasks'
+                }
+            })
+            .populate('goals')
+            .populate('rewards');
 
-    res.send({
-        message: 'Tasks added successfully',
-        routine: updatedRoutine,
-    });
+        res.send({
+            message: 'Success',
+            updatedUser: updatedUser?.toJSON(),
+        });
+    } catch (error) {
+        console.error('Error fetching updated user:', error);
+        res.status(500).send({
+            error: 'Failed to retrieve updated user'
+        });
+    }
+    // // Récupère la routine mise à jour avec les nouvelles tâches
+    // const updatedRoutine = await Routine.findOne({ _id: routine._id }).populate('tasks');
+
+    // res.send({
+    //     message: 'Tasks added successfully',
+    //     routine: updatedRoutine,
+    // });
 }
 
 export default authMiddleware(requestMiddleware(addTasks, { validation: { body: addTasksSchema } }));
