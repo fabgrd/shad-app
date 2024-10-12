@@ -5,7 +5,6 @@ type Props = {}
 
 const CommentInput = (props: Props) => {
     return (
-
         <TextInput
             style={{
                 width: '100%',

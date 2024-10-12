@@ -29,12 +29,12 @@ router.post('/routine/check', RoutineController.checkTask);
 router.patch('/routine/update', RoutineController.updateRoutine);
 
 // rewards routes
-router.post('/rewards/', RewardsController.add);
 router.get('/rewards/', RewardsController.get);
+router.post('/rewards/add', RewardsController.add);
 
 // goals routes
-router.post('/goals/', GoalsController.add);
 router.get('/goals/', GoalsController.get);
+router.post('/goals/add', GoalsController.add);
 
 // Dev routes
 if (process.env.NODE_ENV === 'development') {

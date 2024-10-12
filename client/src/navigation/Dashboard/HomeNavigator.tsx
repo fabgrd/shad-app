@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from '../../View/Dashboard/Home';
 import DailyRoutine from '../../View/Dashboard/Routine';
 import AddTasks from '../../View/Dashboard/AddTasks';
-
+import ModifyRewards from '../../View/Dashboard/ModifyRewards';
 
 const HomeStack = createNativeStackNavigator();
 
@@ -19,6 +19,7 @@ function OnboardingNavigator() {
             <HomeStack.Screen name="Home" component={Home} />
             <HomeStack.Screen name="DailyRoutine" component={DailyRoutine} />
             <HomeStack.Screen name="AddTasks" component={AddTasks} />
+            <HomeStack.Screen name="ModifyRewards" component={ModifyRewards} />
         </HomeStack.Navigator>
     );
 }

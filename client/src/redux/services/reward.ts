@@ -4,7 +4,7 @@ import { api } from "./api";
 import type { RegisterBody } from "../../types/Auth/Body"
 
 const endpoints = (builder: any) => ({
-    getReward: builder.query({
+    getRewards: builder.query({
         query: () => ({
             url: "rewards",
             method: "GET",
@@ -13,11 +13,19 @@ const endpoints = (builder: any) => ({
     }),
     createRewards: builder.mutation({
         query: (body: any) => ({
-            url: "rewards",
+            url: "rewards/add",
             method: "POST",
             body,
         }),
         providesTags: ["Reward"],
+    }),
+    deleteRewards: builder.mutation({
+        query: (body: any) => ({
+            url: "rewards/delete",
+            method: "DELETE",
+            body,
+        }),
+        invalidatesTags: ["Reward"],
     }),
 });
 
@@ -26,8 +34,9 @@ const rewardApi = api.injectEndpoints({ endpoints });
 export default rewardApi;
 
 export const {
-    useGetRewardQuery,
+    useGetRewardsQuery,
     useCreateRewardsMutation,
+    useDeleteRewardsMutation,
 } = rewardApi;
 
 export const selectUser = (state: any) => state.api.user;

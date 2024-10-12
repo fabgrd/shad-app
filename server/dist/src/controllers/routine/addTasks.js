@@ -60,11 +60,33 @@ const addTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Ajoute les nouvelles tâches à la routine en ajoutant leurs identifiants
     routine.tasks.push(...newTasks.map(task => task._id));
     yield routine.save();
-    // Récupère la routine mise à jour avec les nouvelles tâches
-    const updatedRoutine = yield Routine_1.default.findOne({ _id: routine._id }).populate('tasks');
-    res.send({
-        message: 'Tasks added successfully',
-        routine: updatedRoutine,
-    });
+    try {
+        const updatedUser = yield User_1.default.findById(user._id)
+            .populate({
+            path: 'routine',
+            populate: {
+                path: 'tasks',
+                model: 'RoutineTasks'
+            }
+        })
+            .populate('goals')
+            .populate('rewards');
+        res.send({
+            message: 'Success',
+            updatedUser: updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.toJSON(),
+        });
+    }
+    catch (error) {
+        console.error('Error fetching updated user:', error);
+        res.status(500).send({
+            error: 'Failed to retrieve updated user'
+        });
+    }
+    // // Récupère la routine mise à jour avec les nouvelles tâches
+    // const updatedRoutine = await Routine.findOne({ _id: routine._id }).populate('tasks');
+    // res.send({
+    //     message: 'Tasks added successfully',
+    //     routine: updatedRoutine,
+    // });
 });
 exports.default = (0, auth_middleware_1.authMiddleware)((0, request_middleware_1.default)(addTasks, { validation: { body: exports.addTasksSchema } }));

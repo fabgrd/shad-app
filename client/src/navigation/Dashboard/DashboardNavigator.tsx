@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Text } from 'react-native';
 
 // Colors
 import Colors from '../../styles/colors';
@@ -43,13 +44,21 @@ function DashboardNavigator() {
           backgroundColor: LIGHTER_BLUE,
           borderBottomEndRadius: 20,
           borderBottomStartRadius: 20,
-          height: 120,
+
+          height: 100,
         },
+        headerTitleStyle: {
+          fontSize: 18, // Adjust this value to change the text size
+        },
+        headerTitle: () => (
+          <Text>
+            <Text style={{ fontSize: 24 }}>Hi,</Text> {user?.name || 'Undefined guest'}
+          </Text>
+        ),
       }}
     >
       <DashboardTab.Screen name="LeagueNavigator" component={LeagueNavigator}
         options={{
-          headerTitle: `Hi ${user?.name || 'Undefined guest'}`,
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="trophy" color={color} size={size} />
@@ -58,7 +67,6 @@ function DashboardNavigator() {
       />
       <DashboardTab.Screen name="HomeNavigator" component={HomeNavigator}
         options={{
-          headerTitle: `Hi ${user?.name || 'Undefined guest'}`,
           tabBarShowLabel: false,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" color={color} size={size} />
@@ -69,7 +77,7 @@ function DashboardNavigator() {
         name="ProfileNavigator" component={ProfileNavigator}
         options={{
           tabBarShowLabel: false,
-          headerTitle: `Hi ${user?.name || 'Undefined guest'}`,
+          headerTitle: `Hi, ${user?.name || 'Undefined guest'}`,
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account" color={color} size={size} />
           ),

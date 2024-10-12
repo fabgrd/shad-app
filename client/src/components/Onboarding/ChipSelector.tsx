@@ -1,7 +1,10 @@
 import { View, Text } from 'react-native';
 import React, { useState } from 'react';
 // Remplacer l'importation depuis @expo/vector-icons par celle de react-native-vector-icons
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'; // Import de l'icône depuis react-native-vector-icons
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+import colors from '../../styles/colors';
+
 
 // Components
 import Input from '../Misc/Input';
@@ -36,13 +39,31 @@ const Chip = ({ chip, onDelete }: any) => {
       >
         {chip}
       </Text>
+      <View
+      style={{
+        width: 25, 
+        height: 25,
+        borderRadius : 15, 
+        shadowColor: colors.LIGHT_BLACK,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 1,
+        marginLeft: 10,
+        backgroundColor: colors.LIGHTER_BLUE,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: colors.LIGHT_BLACK
+      }}
+    >
       <MaterialIcons
         name="close" // Icône de croix
         size={20}
         color="black"
-        style={{ marginLeft: 10 }}
         onPress={() => onDelete(chip)}
       />
+    </View>
     </View>
   );
 };

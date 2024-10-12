@@ -1,17 +1,18 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from 'react-native';
+import React from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons'; // Import de l'icône
 
 // Components
-import Section from './Section'
+import Section from './Section';
 
 // Type
-import type { Goal } from '../../types/Goal'
+import type { Goal } from '../../types/Goal';
 
 // MOCK_DATA
-import MOCK_GOALS from '../../MOCK/Dashboard/MOCK_GOALS'
+import MOCK_GOALS from '../../MOCK/Dashboard/MOCK_GOALS';
 
 // Redux
-import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux';
 
 // Moment
 import moment from 'moment';
@@ -22,8 +23,9 @@ const GoalsSummary = () => {
 
     return (
         <Section
-            title='Goals'
+        title="Goals"
         >
+        <MaterialCommunityIcons name="flag" size={24} color="green" style={{ marginRight: 5 }} />
             <View
                 style={{
                     flexDirection: 'column',
@@ -37,31 +39,33 @@ const GoalsSummary = () => {
                     const objective = moment(goal?.delay, "YYYY-MM-DD");
                     const days = objective.diff(now, "days");
                     return (
-                        <Text key={index}
-                            style={{
-                                marginBottom: 10,
-                                fontFamily: 'Roboto-Bold'
-                            }}
-                        >
-                            {
-                                days <= 1
-                                    ? 'Of the day'
-                                    : days <= 7
-                                        ? 'Of the week'
-                                        : 'Long-term'
-                            }
-                            {" : "}
+                        <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+                            {/* Ajout de l'icône de drapeau */}
                             <Text
                                 style={{
-                                    fontFamily: 'Roboto-Light'
+                                    fontFamily: 'Roboto-Bold',
                                 }}
-                            >{goal?.goal}</Text>
-                        </Text>
-                    )
+                            >
+                                {
+                                    days <= 1
+                                        ? 'Of the day'
+                                        : days <= 7
+                                            ? 'Of the week'
+                                            : 'Long-term'
+                                }
+                                {" : "}
+                                <Text
+                                    style={{
+                                        fontFamily: 'Roboto-Light'
+                                    }}
+                                >{goal?.goal}</Text>
+                            </Text>
+                        </View>
+                    );
                 })}
             </View>
         </Section>
-    )
-}
+    );
+};
 
-export default GoalsSummary
+export default GoalsSummary;

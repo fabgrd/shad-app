@@ -55,7 +55,7 @@ const endpoints = (builder: any) => ({
             body,
         }),
         invalidatesTags: ["Routine"],
-    }),   
+    }),
 });
 
 const routineApi = api.injectEndpoints({ endpoints });

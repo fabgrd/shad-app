@@ -36,7 +36,7 @@ const DailyRoutine = ({ user, navigation, route }: DailyRoutineProps) => {
                     fontSize: 20,
                     fontWeight: 'bold',
                     marginBottom: 10,
-                }} element={Text} format="dddd">{new Date()}</Moment>
+                }} element={Text} format="dddd MMM DD">{new Date()}</Moment>
             }
         >
             {routineIsCompleted ?

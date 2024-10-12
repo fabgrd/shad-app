@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import userApi from "../../services/auth";
 import authApi from "../../services/auth";
 import routineApi from "../../services/routine";
+import rewardApi from "../../services/reward";
 import { PURGE } from "redux-persist";
 import { RoutineTask } from "../../../types/RoutineTask";
 
@@ -51,6 +52,9 @@ export const userSlice = createSlice({
     },
     updateTasks: (state, action) => {
       state.user.tasks = action.payload;
+    },
+    updateRewards: (state, action) => {
+      state.user.rewards = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -107,7 +111,16 @@ export const userSlice = createSlice({
       .addMatcher(routineApi.endpoints.updateRoutine.matchFulfilled, (state: any, action: { payload: any }) => {
         const user = action?.payload;
         state.user = user?.updatedUser;
-      });
+      })
+      // .addMatcher(rewardApi.endpoints.getRewards.matchFulfilled, (state: any, action: { payload: any }) => {
+      //   const user = action?.payload;
+      //   state.user.rewards = action.payload;
+      // })
+      // .addMatcher(rewardApi.endpoints.createRewards.matchFulfilled, (state: any, action: { payload: any }) => {
+      //   const user = action?.payload;
+      //   state.user = user?.updatedUser;
+      //   state.user.rewards = action.payload.rewards;
+      // });
   },
 });
 
