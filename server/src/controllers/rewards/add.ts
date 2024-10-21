@@ -21,6 +21,7 @@ interface AddRewardsReqBody {
 }
 
 const addRewards: RequestHandler = async (req: Request<{}, {}, AddRewardsReqBody>, res) => {
+    console.log('addRewards called with body:', req.body);
     const { rewards } = req.body;
 
     // Trouve l'utilisateur connecté
@@ -52,7 +53,10 @@ const addRewards: RequestHandler = async (req: Request<{}, {}, AddRewardsReqBody
     try {
         const updatedUser = await User.findById(user._id)
             .populate('goals')
-            .populate('rewards');
+            .populate('rewards')
+            .populate('routine'); // Assurez-vous de peupler la routine également
+
+        console.log('Updated user:', updatedUser);
 
         res.send({
             message: 'Success',

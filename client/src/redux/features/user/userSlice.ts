@@ -13,7 +13,7 @@ interface UserState {
     name: string;
     email: string;
     tasks: RoutineTask[];
-    goals: any[]; // Ajoutez les autres propriétés nécessaires
+    goals: any[];
     rewards: any[];
   };
   accessToken: string | null;
@@ -112,15 +112,20 @@ export const userSlice = createSlice({
         const user = action?.payload;
         state.user = user?.updatedUser;
       })
-      // .addMatcher(rewardApi.endpoints.getRewards.matchFulfilled, (state: any, action: { payload: any }) => {
-      //   const user = action?.payload;
-      //   state.user.rewards = action.payload;
-      // })
-      // .addMatcher(rewardApi.endpoints.createRewards.matchFulfilled, (state: any, action: { payload: any }) => {
-      //   const user = action?.payload;
-      //   state.user = user?.updatedUser;
-      //   state.user.rewards = action.payload.rewards;
-      // });
+      .addMatcher(rewardApi.endpoints.getRewards.matchFulfilled, (state: any, action: { payload: any }) => {
+        const user = action?.payload;
+        state.user = user?.updatedUser;
+        state.user.rewards = action.payload.rewards;
+      })
+      .addMatcher(rewardApi.endpoints.createRewards.matchFulfilled, (state: any, action: { payload: any }) => {
+        const { updatedUser } = action.payload;
+        if (updatedUser) {
+          state.user = {
+            ...state.user,
+            rewards: updatedUser.rewards
+          };
+        }
+      });
   },
 });
 

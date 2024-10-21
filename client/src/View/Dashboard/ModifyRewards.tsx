@@ -14,7 +14,7 @@ import Rewards from '../../../assets/images/Onboarding/Rewards';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
-import { useCreateRewardsMutation } from '../../redux/services/reward';
+import { useCreateRewardsMutation, useGetRewardsQuery } from '../../redux/services/reward';
 import { actions } from '../../redux/features/user/userSlice';
 
 // Types 
@@ -57,9 +57,9 @@ export default function ModifyRewards({ navigation }: any) {
     createRewards({
       rewards: payload
     }).unwrap().then((res) => {
-      console.log(res);
+      console.log('createRewards:', res);
     }).catch((err) => {
-      console.log('Error while creating rewards', err);
+      console.error('Error while creating rewards', err);
     })
     navigation.navigate('Home')
   }

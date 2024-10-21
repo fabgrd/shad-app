@@ -13,7 +13,7 @@ import Colors from '../../styles/colors';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
-import { useGetRewardsQuery } from '../../redux/services/reward'; // Assurez-vous que ce chemin est correct
+import { useGetRewardsQuery } from '../../redux/services/reward';
 
 // Type
 import type { Reward } from '../../types/Reward';
@@ -25,29 +25,28 @@ const RewardsSummary = () => {
     const navigation = useNavigation<NavigationProps['navigation']>();
     const dispatch = useDispatch();
     const { BLUE } = Colors;
-    const user = useSelector((state: any) => state.user.user);
-    const now = moment();
-
     const { refetch } = useGetRewardsQuery(undefined, {
         refetchOnReconnect: true,
         // refetchOnWindowFocus: true,
         refetchOnMountOrArgChange: true,
       });
-    useFocusEffect(
+      useFocusEffect(
         React.useCallback(() => {
-            // Cette fonction sera appelée chaque fois que l'écran est focalisé
+            console.log("Refetching rewards...");
             refetch();
         }, [refetch])
     );
+    
 
-    const rewards = user.rewards || [];
+    const rewards = useSelector((state: any) => state.user.user.rewards) || [];
 
     return (
         <Section title="Rewards">
             <View style={styles.rewardsContainer}>
-                {rewards.length > 0 ? (
+                {rewards && rewards.length > 0 ? (
                     rewards.map((reward: Reward, index: number) => {
-                        const objective = moment(reward.remainingDays, "YYYY-MM-DD");
+                        const now = moment();
+                        const objective = moment(reward.remainingDays);
                         const days = objective.diff(now, "days");
                         return (
                             <View key={index} style={styles.rewardItem}>
