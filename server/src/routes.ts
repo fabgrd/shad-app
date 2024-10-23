@@ -31,6 +31,7 @@ router.patch('/routine/update', RoutineController.updateRoutine);
 // rewards routes
 router.get('/rewards/', RewardsController.get);
 router.post('/rewards/add', RewardsController.add);
+router.delete('/rewards/delete', RewardsController.deleteRewards);
 
 // goals routes
 router.get('/goals/', GoalsController.get);

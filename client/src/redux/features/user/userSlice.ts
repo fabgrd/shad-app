@@ -125,6 +125,15 @@ export const userSlice = createSlice({
             rewards: updatedUser.rewards
           };
         }
+      })
+      .addMatcher(rewardApi.endpoints.deleteRewards.matchFulfilled, (state: any, action: { payload: any }) => {
+        const { updatedUser } = action.payload;
+        if (updatedUser) {
+          state.user = {
+            ...state.user,
+            rewards: updatedUser.rewards
+          };
+        }
       });
   },
 });

@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View, Keyboard, KeyboardAvoidingView, TouchableWithoutFeedback, ScrollView, Platform, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, Keyboard, KeyboardAvoidingView, TouchableWithoutFeedback, ScrollView, Platform, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+// import { MaterialIcons } from '@expo/vector-icons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 // Components
 import Button from '../../components/Misc/Button';
@@ -14,7 +16,7 @@ import Rewards from '../../../assets/images/Onboarding/Rewards';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
-import { useCreateRewardsMutation, useGetRewardsQuery } from '../../redux/services/reward';
+import { useCreateRewardsMutation, useGetRewardsQuery, useDeleteRewardsMutation } from '../../redux/services/reward';
 import { actions } from '../../redux/features/user/userSlice';
 
 // Types 
@@ -24,16 +26,20 @@ type RewardType = {
   delay: Date,
 }
 
+// Add this type definition
+type RewardWithId = Reward & { _id: string };
+
 export default function ModifyRewards({ navigation }: any) {
   const [rewardGoal, setRewardGoal] = useState<string>('');
   const [delay, setDelay] = useState<Date>(new Date());
   const [rewards, setRewards] = useState<RewardType[]>([]);
-  const existingRewards = useSelector((state: any) => state.user.user.rewards) || [];
+  const existingRewards = useSelector((state: any) => state.user.user.rewards) || [] as RewardWithId[];
   const tabBarHeight = useBottomTabBarHeight()
 
   const dispatch = useDispatch();
 
   const [createRewards] = useCreateRewardsMutation();
+  const [deleteRewards] = useDeleteRewardsMutation();
 
   const handleModifyRewardsCompletion = () => {
     const payloadModifyRewards = {
@@ -77,6 +83,18 @@ export default function ModifyRewards({ navigation }: any) {
     setDelay(new Date());
     setRewardGoal('');
   }
+
+  const handleDeleteReward = (rewardId: string) => {
+    deleteRewards({ rewardsToRemove: [rewardId] })
+      .unwrap()
+      .then((res) => {
+        console.log('Reward deleted:', res);
+        // You may want to update local state or refetch rewards here
+      })
+      .catch((err) => {
+        console.error('Error while deleting reward', err);
+      });
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -136,21 +154,25 @@ export default function ModifyRewards({ navigation }: any) {
                 style={styles.scrollView}
                 contentContainerStyle={styles.scrollViewContent}
               >
-                {existingRewards && existingRewards.map((reward: Reward, index: number) => (
-                  <ChipWithIcon
-                    key={index}
-                    icon={GoalDelay}
-                    title={reward.title}
-                    delay={new Date(reward.remainingDays)}
-                  />
+                {existingRewards && existingRewards.map((reward: RewardWithId, index: number) => (
+                  <View key={index} style={styles.rewardItem}>
+                    <ChipWithIcon
+                      icon={GoalDelay}
+                      title={reward.title}
+                      delay={new Date(reward.remainingDays)}
+                      onDelete={() => handleDeleteReward(reward._id)}
+                    />
+                  </View>
                 ))}
                 {rewards.map((reward, index) => (
-                  <ChipWithIcon
-                    key={`new-${index}`}
-                    icon={GoalDelay}
-                    title={reward.reward}
-                    delay={reward.delay}
-                  />
+                  <View key={`new-${index}`} style={styles.rewardItem}>
+                    <ChipWithIcon
+                      icon={GoalDelay}
+                      title={reward.reward}
+                      delay={reward.delay}
+                      onDelete={() => setRewards(rewards.filter((_, i) => i !== index))}
+                    />
+                  </View>
                 ))}
               </ScrollView>
               <Button
@@ -226,5 +248,16 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 10,
     marginBottom: 15,
+  },
+  rewardItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  deleteButton: {
+    marginLeft: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5,
   },
 });

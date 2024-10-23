@@ -1,46 +1,45 @@
 import { Request, RequestHandler } from 'express';
-import Joi from 'joi';
 import requestMiddleware from '../../middleware/request-middleware';
 import { authMiddleware } from '../../middleware/auth-middleware';
 import User from '../../models/User';
 import Rewards from '../../models/Rewards';
 import logger from '../../logger';
 
-// req.body is an array of reward IDs to delete
-interface deleteReqBody {
-    rewardIds: string[];
+interface DeleteRewardsReqBody {
+    rewardsToRemove: string[];
 }
 
-const deleteRewards: RequestHandler = async (req: Request<{}, {}, deleteReqBody>, res) => {
-    const user = await User.findOne({ _id: req?.user?._id });
+const deleteRewards: RequestHandler = async (req: Request<{}, {}, DeleteRewardsReqBody>, res) => {
+    const { rewardsToRemove } = req.body;
 
+    const user = await User.findOne({ _id: req?.user?._id });
     if (!user) {
-        return res.status(400).send({
-            error: 'User not found'
-        });
+        return res.status(400).send({ error: 'User not found' });
     }
 
-    try {
-        // Filter out the rewards to delete
-        const rewardsToDelete = req.body.rewardIds;
+    if (rewardsToRemove.length > 0) {
+        try {
+            await Rewards.deleteMany({ _id: { $in: rewardsToRemove } });
+            user.rewards = user.rewards.filter(reward => !rewardsToRemove.includes(reward.toString()));
+            await user.save();
 
-        // Remove the rewards from the user's reward list
-        user.rewards = user.rewards.filter((rewardId) => !rewardsToDelete.includes(rewardId.toString()));
-        
-        // Remove the rewards from the Rewards collection
-        await Rewards.deleteMany({ _id: { $in: rewardsToDelete } });
+            const updatedUser = await User.findById(user._id)
+                .populate('routine')
+                .populate('goals')
+                .populate('rewards');
 
-        // Save the updated user
-        await user.save();
-
-        return res.send({
-            message: 'Rewards successfully deleted'
-        });
-    } catch (error) {
-        logger.error('Error deleting rewards: ', error);
-        return res.status(500).send({
-            error: 'An error occurred while deleting rewards'
-        });
+            res.send({
+                message: 'Rewards deleted successfully',
+                updatedUser: updatedUser?.toJSON(),
+            });
+        } catch (error) {
+            logger.error('Error deleting rewards:', error);
+            res.status(500).send({
+                error: 'An error occurred while deleting rewards'
+            });
+        }
+    } else {
+        res.send({ message: 'No rewards to remove' });
     }
 };
 

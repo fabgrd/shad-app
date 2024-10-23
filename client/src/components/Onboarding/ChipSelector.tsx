@@ -40,30 +40,30 @@ const Chip = ({ chip, onDelete }: any) => {
         {chip}
       </Text>
       <View
-      style={{
-        width: 25, 
-        height: 25,
-        borderRadius : 15, 
-        shadowColor: colors.LIGHT_BLACK,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 2,
-        elevation: 1,
-        marginLeft: 10,
-        backgroundColor: colors.LIGHTER_BLUE,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: colors.LIGHT_BLACK
-      }}
-    >
-      <MaterialIcons
-        name="close" // Icône de croix
-        size={20}
-        color="black"
-        onPress={() => onDelete(chip)}
-      />
-    </View>
+        style={{
+          width: 25,
+          height: 25,
+          borderRadius: 15,
+          shadowColor: colors.LIGHT_BLACK,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.8,
+          shadowRadius: 2,
+          elevation: 1,
+          marginLeft: 10,
+          backgroundColor: colors.LIGHTER_BLUE,
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderWidth: 1,
+          borderColor: colors.LIGHT_BLACK
+        }}
+      >
+        <MaterialIcons
+          name="close" // Icône de croix
+          size={20}
+          color="black"
+          onPress={() => onDelete(chip)}
+        />
+      </View>
     </View>
   );
 };

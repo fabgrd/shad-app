@@ -27,7 +27,7 @@ const endpoints = (builder: any) => ({
         }),
         invalidatesTags: ["Reward"],
     }),
-});
+    });
 
 const rewardApi = api.injectEndpoints({ endpoints });
 
