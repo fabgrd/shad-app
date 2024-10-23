@@ -11,13 +11,21 @@ const endpoints = (builder: any) => ({
         }),
         providesTags: ["Goal"],
     }),
-    createGoal: builder.mutation({
-        query: (body: RegisterBody) => ({
-            url: "goals",
+    createGoals: builder.mutation({
+        query: (body: any) => ({
+            url: "goals/add",
             method: "POST",
             body,
         }),
         providesTags: ["Goal"],
+    }),
+    deleteGoals: builder.mutation({
+        query: (body: any) => ({
+            url: "goals/delete",
+            method: "DELETE",
+            body,
+        }),
+        invalidatesTags: ["Goal"],
     }),
 });
 
@@ -27,7 +35,8 @@ export default goalApi;
 
 export const {
     useGetGoalsQuery,
-    useCreateGoalMutation,
+    useCreateGoalsMutation,
+    useDeleteGoalsMutation,
 } = goalApi;
 
 export const selectUser = (state: any) => state.api.user;

@@ -36,6 +36,7 @@ router.delete('/rewards/delete', RewardsController.deleteRewards);
 // goals routes
 router.get('/goals/', GoalsController.get);
 router.post('/goals/add', GoalsController.add);
+router.delete('/goals/delete', GoalsController.deleteGoals);
 
 // Dev routes
 if (process.env.NODE_ENV === 'development') {

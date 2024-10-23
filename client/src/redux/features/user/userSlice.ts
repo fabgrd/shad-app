@@ -3,6 +3,7 @@ import userApi from "../../services/auth";
 import authApi from "../../services/auth";
 import routineApi from "../../services/routine";
 import rewardApi from "../../services/reward";
+import goalApi from "../../services/goal";
 import { PURGE } from "redux-persist";
 import { RoutineTask } from "../../../types/RoutineTask";
 
@@ -55,6 +56,9 @@ export const userSlice = createSlice({
     },
     updateRewards: (state, action) => {
       state.user.rewards = action.payload;
+    },
+    updateGoals: (state, action) => {
+      state.user.goals = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -132,6 +136,29 @@ export const userSlice = createSlice({
           state.user = {
             ...state.user,
             rewards: updatedUser.rewards
+          };
+        }
+      })
+      .addMatcher(goalApi.endpoints.getGoals.matchFulfilled, (state: any, action: { payload: any }) => {
+        const user = action?.payload;
+        state.user = user?.updatedUser;
+        state.user.goals = action.payload.goals;
+      })
+      .addMatcher(goalApi.endpoints.createGoals.matchFulfilled, (state: any, action: { payload: any }) => {
+        const { updatedUser } = action.payload;
+        if (updatedUser) {
+          state.user = {
+            ...state.user,
+            goals: updatedUser.goals
+          };
+        }
+      })
+      .addMatcher(goalApi.endpoints.deleteGoals.matchFulfilled, (state: any, action: { payload: any }) => {
+        const { updatedUser } = action.payload;
+        if (updatedUser) {
+          state.user = {
+            ...state.user,
+            goals: updatedUser.goals
           };
         }
       });

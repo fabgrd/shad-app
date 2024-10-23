@@ -1,7 +1,8 @@
 import add from "./add";
 import get from "./get";
-
+import deleteGoals from "./delete";
 export {
     add,
-    get
+    get,
+    deleteGoals
 }
