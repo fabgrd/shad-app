@@ -3,7 +3,7 @@ import {
 } from 'mongoose';
 
 export interface IGoals extends Document {
-    delay: Date;
+    remainingDays: Date;
     goal: string;
     user: string;
 }
@@ -11,7 +11,7 @@ export interface IGoals extends Document {
 interface IGoalsModal extends Model<IGoals> { }
 
 const schema = new Schema<IGoals>({
-    delay: { type: Date, index: true, required: true },
+    remainingDays: { type: Date, index: true, required: true },
     goal: { type: String, index: true, required: true },
     user: { type: String, index: true, required: true }
 }, { timestamps: true });

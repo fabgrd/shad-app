@@ -1,6 +1,7 @@
 export type Goal = {
-    id: number;
+    _id: string;
     goal: string;
-    delay: number;
+    remainingDays: number;
     completed: boolean;
+    createdAt: string;
 };

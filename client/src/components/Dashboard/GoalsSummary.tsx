@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet } from 'react-native';
-import React from 'react';
+import { View, Text, StyleSheet} from 'react-native';
+import React, { useState, useEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import CongratulationsModalForGoals from '../../View/Dashboard/CongratulationsModalForGoals';
 
 // Components
 import Section from './Section';
@@ -37,6 +38,25 @@ const GoalsSummary = () => {
     );
 
     const goals = useSelector((state: any) => state.user.user.goals) || [];
+    const user = useSelector((state: any) => state?.user?.user);
+    const [completedGoal, setCompletedGoal] = useState<Goal | null>(null);
+
+    useEffect(() => {
+        const goalWithZeroDays = goals.find((goal: Goal) => {
+            const now = moment();
+            const objective = moment(goal.remainingDays);
+            const days = objective.diff(now, "days");
+            return days <= 0;
+        });
+
+        if (goalWithZeroDays) {
+            setCompletedGoal(goalWithZeroDays);
+        }
+    }, [goals]);
+
+    const handleCloseModal = () => {
+        setCompletedGoal(null);
+    };
 
     return (
         <Section title="Goals">
@@ -44,7 +64,7 @@ const GoalsSummary = () => {
                 {goals && goals.length > 0 ? (
                     goals.map((goal: Goal, index: number) => {
                         const now = moment();
-                        const objective = moment(goal.delay);
+                        const objective = moment(goal.remainingDays);
                         const days = objective.diff(now, "days");
                         return (
                             <View key={index} style={styles.goalItem}>
@@ -67,6 +87,16 @@ const GoalsSummary = () => {
             >
                 Modify goals
             </Button>
+            {completedGoal && (
+                <CongratulationsModalForGoals
+                    visible={!!completedGoal}
+                    onClose={handleCloseModal}
+                    userName={user.name}
+                    goalTitle={completedGoal.goal}
+                    goalId={completedGoal._id}
+                    goalCreatedAt={completedGoal.createdAt}
+                />
+            )}
         </Section>
     );
 };

@@ -7,14 +7,14 @@ import Goals from '../../models/Goals';
 
 export const addGoalsSchema = Joi.object().keys({
     goals: Joi.array().items(Joi.object({
-        delay: Joi.date().required(),
+        remainingDays: Joi.date().required(),
         goal: Joi.string().required(),
     })).required()
 });
 
 interface AddGoalsReqBody {
     goals: {
-        delay: Date;
+        remainingDays: Date;
         goal: string;
     }[];
 }
@@ -34,7 +34,7 @@ const addGoals: RequestHandler = async (req: Request<{}, {}, AddGoalsReqBody>, r
     const createGoalsAsync = async () => {
         return Promise.all(goals.map(async (goal) => {
             const newGoal = new Goals({
-                delay: goal.delay,
+                remainingDays: goal.remainingDays,
                 goal: goal.goal,
                 user: user._id
             });
