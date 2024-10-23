@@ -1,6 +1,7 @@
 export type Reward = {
-    id: number;
+    _id: string;
     title: string;
     remainingDays: number;
     completed: boolean;
+    createdAt: string;
 };

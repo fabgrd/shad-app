@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import userApi from "../../services/auth";
 import authApi from "../../services/auth";
 import routineApi from "../../services/routine";
@@ -6,6 +6,7 @@ import rewardApi from "../../services/reward";
 import goalApi from "../../services/goal";
 import { PURGE } from "redux-persist";
 import { RoutineTask } from "../../../types/RoutineTask";
+import { Reward } from "../../../types/Reward";
 
 interface UserState {
   user: {
@@ -15,11 +16,12 @@ interface UserState {
     email: string;
     tasks: RoutineTask[];
     goals: any[];
-    rewards: any[];
+    rewards: Reward[];
   };
   accessToken: string | null;
   refreshToken: string | null;
   isLogged: boolean;
+  completedReward: Reward | null;
 }
 
 const initialState: UserState = {
@@ -35,6 +37,7 @@ const initialState: UserState = {
   accessToken: null,
   refreshToken: null,
   isLogged: false,
+  completedReward: null,
 };
 
 export const userSlice = createSlice({
@@ -60,6 +63,28 @@ export const userSlice = createSlice({
     updateGoals: (state, action) => {
       state.user.goals = action.payload;
     },
+    // checkCompletedRewards: (state) => {
+    //   const now = new Date();
+    //   console.log("---Current Date:", now);
+
+    //   state.completedReward = state.user.rewards.find(reward => {
+    //     const createdAt = new Date(reward.createdAt);
+    //     console.log("---Reward Created At:", createdAt);
+
+    //     const remainingDays = reward.remainingDays - Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+    //     console.log("---Remaining Days for Reward:", remainingDays);
+
+    //     return remainingDays <= 0;
+    //   }) || null;
+
+    //   console.log("Completed Reward:", state.completedReward);
+    // },
+    // removeCompletedReward: (state) => {
+    //   if (state.completedReward) {
+    //     state.user.rewards = state.user.rewards.filter(reward => reward._id !== state.completedReward?._id);
+    //     state.completedReward = null;
+    //   }
+    // },
   },
   extraReducers: (builder) => {
     builder
@@ -166,4 +191,4 @@ export const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
-export const { actions } = userSlice;
+export const { tokenReceived, loggedOut, setIsLogged, updateTasks, updateRewards, updateGoals } = userSlice.actions;

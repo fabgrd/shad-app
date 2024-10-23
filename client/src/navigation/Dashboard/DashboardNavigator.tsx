@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Text } from 'react-native';
+import { Text, View, Image, StyleSheet } from 'react-native';
 
 // Colors
 import Colors from '../../styles/colors';
@@ -51,9 +51,13 @@ function DashboardNavigator() {
           fontSize: 18, // Adjust this value to change the text size
         },
         headerTitle: () => (
-          <Text>
-            <Text style={{ fontSize: 24 }}>Hi,</Text> {user?.name || 'Undefined guest'}
-          </Text>
+          <View style={styles.headerContainer}>
+            <Image
+              source={require('../../../assets/test-bee.gif')}
+              style={styles.headerGif}
+            />
+            <Text style={styles.headerText}>You're a strong bee, {user?.name || 'Undefined guest'}</Text>
+          </View>
         ),
       }}
     >
@@ -74,10 +78,19 @@ function DashboardNavigator() {
         }}
       />
       <DashboardTab.Screen
-        name="ProfileNavigator" component={ProfileNavigator}
+        name="ProfileNavigator"
+        component={ProfileNavigator}
         options={{
           tabBarShowLabel: false,
-          headerTitle: `Hi, ${user?.name || 'Undefined guest'}`,
+          headerTitle: () => (
+            <View style={styles.headerContainer}>
+              <Image
+                source={require('../../../assets/test-bee.gif')}
+                style={styles.headerGif}
+              />
+              <Text style={styles.headerText}>Hi, {user?.name || 'Undefined guest'}</Text>
+            </View>
+          ),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account" color={color} size={size} />
           ),
@@ -88,3 +101,21 @@ function DashboardNavigator() {
 }
 
 export default DashboardNavigator;
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
+  headerGif: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333', // Adjust color as needed
+  },
+});

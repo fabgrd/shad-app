@@ -50,7 +50,6 @@ export default function ModifyGoals({ navigation }: any) {
     createGoals({
       goals: payload
     }).unwrap().then((res) => {
-      console.log('createGoals:', res);
     }).catch((err) => {
       console.error('Error while creating goals', err);
     })

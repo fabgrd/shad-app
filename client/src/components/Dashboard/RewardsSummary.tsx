@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
@@ -21,8 +21,12 @@ import type { Reward } from '../../types/Reward';
 // Moment
 import moment from 'moment';
 
+// CongratulationsModal
+import CongratulationsModal from '../../View/Dashboard/CongratulationsModal';
+
 const RewardsSummary = () => {
     const navigation = useNavigation<NavigationProps['navigation']>();
+    const user = useSelector((state: any) => state?.user?.user);
     const dispatch = useDispatch();
     const { BLUE } = Colors;
     const { refetch } = useGetRewardsQuery(undefined, {
@@ -39,6 +43,24 @@ const RewardsSummary = () => {
     
 
     const rewards = useSelector((state: any) => state.user.user.rewards) || [];
+    const [completedReward, setCompletedReward] = useState<Reward | null>(null);
+
+    useEffect(() => {
+        const rewardWithZeroDays = rewards.find((reward: Reward) => {
+            const now = moment();
+            const objective = moment(reward.remainingDays);
+            const days = objective.diff(now, "days");
+            return days <= 0;
+        });
+
+        if (rewardWithZeroDays) {
+            setCompletedReward(rewardWithZeroDays);
+        }
+    }, [rewards]);
+
+    const handleCloseModal = () => {
+        setCompletedReward(null);
+    };
 
     return (
         <Section title="Rewards">
@@ -69,6 +91,16 @@ const RewardsSummary = () => {
             >
                 Modify rewards
             </Button>
+            {completedReward && (
+                <CongratulationsModal
+                    visible={!!completedReward}
+                    onClose={handleCloseModal}
+                    userName={user.name}
+                    rewardTitle={completedReward.title}
+                    rewardId={completedReward._id}
+                    rewardCreatedAt={completedReward.createdAt}
+                />
+            )}
         </Section>
     );
 };
