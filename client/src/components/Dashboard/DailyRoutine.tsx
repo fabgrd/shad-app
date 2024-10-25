@@ -20,11 +20,18 @@ type DailyRoutineProps = {
 }
 
 const DailyRoutine = ({ user, navigation, route }: DailyRoutineProps) => {
-    const currentDate = moment();
-    const futureDate = moment(user?.routine?.deadline);
+    const currentTime = moment();
+    const deadlineTime = typeof user?.routine?.deadline === 'string' ? user?.routine?.deadline : '00:00';
+    const deadlineMoment = moment(deadlineTime, 'HH:mm'); // Parse the deadline string into a moment object
+    
+    let timeDiff = deadlineMoment.diff(currentTime);
+    if (timeDiff < 0) {
+        // If the deadline has passed, add 24 hours
+        timeDiff += 24 * 60 * 60 * 1000;
+    }
 
-    const duration = moment.duration(futureDate.diff(currentDate));
-    const hoursLeft = Math.round(duration.asHours());
+    const duration = moment.duration(timeDiff);
+    const hoursLeft = Math.floor(duration.asHours());
     const minutesLeft = duration.minutes();
 
     const routineIsCompleted = user?.routine?.tasks?.every(task => task.completed);
@@ -69,7 +76,7 @@ const DailyRoutine = ({ user, navigation, route }: DailyRoutineProps) => {
                             marginBottom: 10,
                         }}
                     >
-                        {hoursLeft + ':' + minutesLeft + 'h left until your Daily Routine fail'}
+                         {`${hoursLeft}:${minutesLeft.toString().padStart(2, '0')} left until your Daily Routine fails`}
                     </Text>
                 )
             }

@@ -6,7 +6,7 @@ import { IRoutineTasks } from './RoutineTasks';
 
 // Mise à jour de l'interface IRoutine pour utiliser String pour deadline
 export interface IRoutine extends Document {
-    deadline: string; // Changement du type en string
+    deadline: Date; // Changement du type en string
     completed: boolean;
     cheatDay: boolean;
     finishedAt: Date | null;
@@ -18,7 +18,7 @@ export interface IRoutine extends Document {
 interface IRoutineModal extends Model<IRoutine> { }
 
 const schema = new Schema<IRoutine>({
-    deadline: { type: String, index: true, required: true }, // Changement du type en String
+    deadline: { type: Date, index: true, required: true }, // Changement du type en String
     completed: { type: Boolean, index: true, required: true },
     cheatDay: { type: Boolean, index: true, required: true },
     finishedAt: { type: Date, index: true, required: false },

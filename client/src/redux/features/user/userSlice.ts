@@ -7,6 +7,7 @@ import goalApi from "../../services/goal";
 import { PURGE } from "redux-persist";
 import { RoutineTask } from "../../../types/RoutineTask";
 import { Reward } from "../../../types/Reward";
+import { Routine } from "../../../types/Routine";
 
 interface UserState {
   user: {
@@ -17,6 +18,7 @@ interface UserState {
     tasks: RoutineTask[];
     goals: any[];
     rewards: Reward[];
+    routine: Routine[]
   };
   accessToken: string | null;
   refreshToken: string | null;
@@ -33,6 +35,7 @@ const initialState: UserState = {
     tasks: [],
     goals: [],
     rewards: [],
+    routine: [],
   },
   accessToken: null,
   refreshToken: null,
@@ -63,28 +66,9 @@ export const userSlice = createSlice({
     updateGoals: (state, action) => {
       state.user.goals = action.payload;
     },
-    // checkCompletedRewards: (state) => {
-    //   const now = new Date();
-    //   console.log("---Current Date:", now);
-
-    //   state.completedReward = state.user.rewards.find(reward => {
-    //     const createdAt = new Date(reward.createdAt);
-    //     console.log("---Reward Created At:", createdAt);
-
-    //     const remainingDays = reward.remainingDays - Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
-    //     console.log("---Remaining Days for Reward:", remainingDays);
-
-    //     return remainingDays <= 0;
-    //   }) || null;
-
-    //   console.log("Completed Reward:", state.completedReward);
-    // },
-    // removeCompletedReward: (state) => {
-    //   if (state.completedReward) {
-    //     state.user.rewards = state.user.rewards.filter(reward => reward._id !== state.completedReward?._id);
-    //     state.completedReward = null;
-    //   }
-    // },
+    updateRoutine: (state, action) => {
+      state.user.routine = action.payload.routine;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -137,10 +121,6 @@ export const userSlice = createSlice({
         state.user = user?.updatedUser;
         state.user.tasks = action.payload.tasks;
       })
-      .addMatcher(routineApi.endpoints.updateRoutine.matchFulfilled, (state: any, action: { payload: any }) => {
-        const user = action?.payload;
-        state.user = user?.updatedUser;
-      })
       .addMatcher(rewardApi.endpoints.getRewards.matchFulfilled, (state: any, action: { payload: any }) => {
         const user = action?.payload;
         state.user = user?.updatedUser;
@@ -186,7 +166,11 @@ export const userSlice = createSlice({
             goals: updatedUser.goals
           };
         }
+      })
+      .addMatcher(routineApi.endpoints.updateRoutine.matchFulfilled, (state: any, action: { payload: any }) => {
+        state.user.routine = [action.payload.routine];
       });
+      
   },
 });
 

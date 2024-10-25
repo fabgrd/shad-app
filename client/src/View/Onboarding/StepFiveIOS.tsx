@@ -13,7 +13,7 @@ import RewardDelay from '../../../assets/images/Onboarding/RewardDelay';
 
 // Redux
 import { useDispatch } from 'react-redux';
-import { useCreateGoalMutation } from '../../redux/services/goal';
+import { useCreateGoalsMutation } from '../../redux/services/goal';
 import { useGetUserMutation } from '../../redux/services/auth';
 
 type GoalType = {
@@ -28,7 +28,7 @@ export default function StepFive({ navigation }: any) {
 
   const dispatch = useDispatch();
 
-  const [createGoal] = useCreateGoalMutation();
+  const [createGoal] = useCreateGoalsMutation();
   const [getUser] = useGetUserMutation();
 
   const handleStepFiveCompletion = () => {
@@ -40,8 +40,17 @@ export default function StepFive({ navigation }: any) {
       payload: payloadStepFive
     })
 
+    const payload: any = []
+
+    goals.forEach((goal) => {
+      payload.push({
+        "remainingDays": goal.delay,
+        "goal": goal.goal,
+      })
+    })
+
     createGoal({
-      goals: goals,
+      goals: payload
     }).unwrap().then((res) => {
       console.log(res);
     }).catch((err) => {

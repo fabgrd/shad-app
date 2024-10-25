@@ -8,11 +8,11 @@ import { log } from 'console';
 
 // Schéma de validation pour la mise à jour du deadline
 export const UpdateRoutineSchema = Joi.object().keys({
-    deadline: Joi.string().pattern(/^([0-1][0-9]|2[0-3]):([0-5][0-9])$/).required(), // Valider le format "HH:mm"
+    deadline: Joi.date().iso().required(),
 });
 
 interface UpdateRoutineReqBody {
-    deadline: string; // Format "HH:mm"
+    deadline: Date; // Format ISO 8601
 }
 
 const updateRoutine: RequestHandler = async (req: Request<{}, {}, UpdateRoutineReqBody>, res) => {
@@ -20,25 +20,34 @@ const updateRoutine: RequestHandler = async (req: Request<{}, {}, UpdateRoutineR
 
     try {
         // Trouver l'utilisateur actuel à partir du token
-        const user = await User.findById(req.user?._id); // Utilise `findById` pour simplifier
+        const user = await User.findOne({ _id: req?.user?._id });
         if (!user) {
             return res.status(400).send({ error: 'User not found' });
         }
 
         // Trouver la routine associée à l'utilisateur
-        const routine = await Routine.findOne({ user: user._id });
+        const routine = await Routine.findOne({ _id: user.routine._id })
         if (!routine) {
             return res.status(404).send({ error: 'Routine not found' });
         }
 
         // Mettre à jour le deadline de la routine
-        routine.deadline = deadline; 
-        console.log('Updated routine:', routine.deadline);
+        // Convertir la chaîne de date en objet Date
+        const newDeadline = new Date(deadline);
+        routine.deadline = newDeadline;
+        console.log("NEW DEADLINE BEFORE DB: ", newDeadline);
+        
         await routine.save();
+        console.log('Updated routine in DB:', routine.deadline);
+
+        // Récupérer la routine mise à jour depuis la base de données
+        const updatedRoutine = await Routine.findById(routine._id);
+        console.log('Fetched updated routine from DB:', updatedRoutine?.deadline);
 
         res.send({
             message: 'Deadline updated successfully',
-            routine,
+            routine: updatedRoutine,
+            updatedUser: user,
         });
     } catch (error) {
         console.error('Error in updateRoutine controller:', error);

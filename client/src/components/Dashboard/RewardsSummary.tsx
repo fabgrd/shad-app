@@ -26,25 +26,20 @@ import CongratulationsModal from '../../View/Dashboard/CongratulationsModal';
 
 const RewardsSummary = () => {
     const navigation = useNavigation<NavigationProps['navigation']>();
-    const user = useSelector((state: any) => state?.user?.user);
     const dispatch = useDispatch();
     const { BLUE } = Colors;
     const { refetch } = useGetRewardsQuery(undefined, {
         refetchOnReconnect: true,
-        // refetchOnWindowFocus: true,
         refetchOnMountOrArgChange: true,
-      });
-      useFocusEffect(
-        React.useCallback(() => {
-            console.log("Refetching rewards...");
-            refetch();
-        }, [refetch])
-    );
-    
-
-    const rewards = useSelector((state: any) => state.user.user.rewards) || [];
+    });
+    const user = useSelector((state: any) => state?.user?.user);
+    const rewards = user?.rewards || [];
     const [completedReward, setCompletedReward] = useState<Reward | null>(null);
-
+    
+    useEffect(() => {
+        refetch();
+    }, [refetch]);
+    
     useEffect(() => {
         const rewardWithZeroDays = rewards.find((reward: Reward) => {
             const now = moment();

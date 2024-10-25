@@ -30,16 +30,13 @@ const GoalsSummary = () => {
         refetchOnReconnect: true,
         refetchOnMountOrArgChange: true,
     });
-    useFocusEffect(
-        React.useCallback(() => {
-            console.log("Refetching goals...");
-            refetch();
-        }, [refetch])
-    );
-
-    const goals = useSelector((state: any) => state.user.user.goals) || [];
     const user = useSelector((state: any) => state?.user?.user);
+    const goals = user?.goals || [];
     const [completedGoal, setCompletedGoal] = useState<Goal | null>(null);
+
+    useEffect(() => {
+        refetch();
+    }, [refetch]);
 
     useEffect(() => {
         const goalWithZeroDays = goals.find((goal: Goal) => {

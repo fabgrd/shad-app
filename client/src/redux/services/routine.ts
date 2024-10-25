@@ -54,7 +54,7 @@ const endpoints = (builder: any) => ({
             method: "PATCH",
             body,
         }),
-        invalidatesTags: ["Routine"],
+        providesTags: ["Routine"],
     }),
 });
 

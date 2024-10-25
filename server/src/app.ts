@@ -7,6 +7,7 @@ import routes from './routes';
 import logger from './logger';
 
 import leagueCron from './Utils/LeagueCron';
+import dailyResetCron from './Utils/DailyResetCron';
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use(routes);
 
 // League cron job
 leagueCron();
+dailyResetCron();
 
 app.use(
     (
