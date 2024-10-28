@@ -25,7 +25,10 @@ export default function AddTasks({ navigation }: any) {
   const [removeTask] = useRemoveTasksMutation();
   const [updateRoutine] = useUpdateRoutineMutation();
   const { data: routine, isLoading } = useGetRoutineQuery(user?.routine?.tasks);
-
+  const { refetch } = useGetRoutineQuery(undefined, {
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
+});
   useEffect(() => {
     if (routine && !isLoading) {
       const existingTasks = user?.routine?.tasks.map((task: Task) => task.title);
@@ -80,8 +83,6 @@ export default function AddTasks({ navigation }: any) {
 
     // Update routine deadline
     if (deadline) {
-
-      console.log(JSON.stringify(user, null, 4))
       const updatedRoutine = {
         routine: user.routine,
         deadline: deadline,

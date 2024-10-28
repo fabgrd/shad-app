@@ -1,5 +1,6 @@
 import { ScrollView, Text, StyleSheet } from 'react-native'
-import React from 'react'
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback } from 'react';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 
 // Components
@@ -8,6 +9,7 @@ import DailyRoutine from '../../components/Dashboard/DailyRoutine'
 import RewardDelay from '../../../assets/images/Onboarding/RewardDelay'
 import RewardsSummary from '../../components/Dashboard/RewardsSummary'
 import GoalsSummary from '../../components/Dashboard/GoalsSummary'
+import { useGetRoutineQuery } from '../../redux/services/routine';
 
 // Type
 import type { NavigationProps } from '../../types/Props/NavigationProps'
@@ -18,6 +20,19 @@ import { useSelector } from 'react-redux'
 const Home = (navigation : NavigationProps) => {
   const user = useSelector((state : any) => state.user.user)
   const tabBarHeight = useBottomTabBarHeight()
+  const { refetch } = useGetRoutineQuery(undefined, {
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
+});
+
+  useFocusEffect(
+    useCallback(() => {
+      console.log("REFETCH DANS HOME");
+      
+      refetch();
+    }, [refetch])
+  );
+
   return (
     <ScrollView
             style={{

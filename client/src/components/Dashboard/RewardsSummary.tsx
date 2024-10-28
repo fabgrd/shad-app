@@ -34,28 +34,53 @@ const RewardsSummary = () => {
     });
     const user = useSelector((state: any) => state?.user?.user);
     const rewards = user?.rewards || [];
-    const [completedReward, setCompletedReward] = useState<Reward | null>(null);
+    const [completedRewards, setCompletedRewards] = useState<Reward[]>([]);
+    const [currentRewardIndex, setCurrentRewardIndex] = useState<number>(0);
+    const [processedRewardIds, setProcessedRewardIds] = useState<Set<string>>(new Set());
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     
     useEffect(() => {
         refetch();
     }, [refetch]);
     
     useEffect(() => {
-        const rewardWithZeroDays = rewards.find((reward: Reward) => {
-            const now = moment();
-            const objective = moment(reward.remainingDays);
-            const days = objective.diff(now, "days");
-            return days <= 0;
-        });
+        if (completedRewards.length === 0) {
+            const rewardsWithZeroDays = rewards.filter((reward: Reward) => {
+                const now = moment();
+                const objective = moment(reward.remainingDays);
+                const days = objective.diff(now, "days");
+                return days <= 0 && !processedRewardIds.has(reward._id);
+            });
 
-        if (rewardWithZeroDays) {
-            setCompletedReward(rewardWithZeroDays);
+            if (rewardsWithZeroDays.length > 0) {
+                setCompletedRewards(rewardsWithZeroDays);
+                setCurrentRewardIndex(0);
+                setIsModalVisible(true);
+                console.log("___LOOP", rewardsWithZeroDays.length, "new rewards found");
+            }
         }
-    }, [rewards]);
+    }, [rewards, processedRewardIds]);
 
     const handleCloseModal = () => {
-        setCompletedReward(null);
+        const currentReward = completedRewards[currentRewardIndex];
+        setIsModalVisible(false);
+        
+        if (currentReward) {
+            setProcessedRewardIds(prev => new Set([...prev, currentReward._id]));
+        }
+
+        if (currentRewardIndex < completedRewards.length - 1) {
+            setTimeout(() => {
+                setCurrentRewardIndex(prev => prev + 1);
+                setIsModalVisible(true);
+            }, 300);
+        } else {
+            setCompletedRewards([]);
+            setCurrentRewardIndex(0);
+        }
     };
+
+    const currentCompletedReward = completedRewards[currentRewardIndex];
 
     return (
         <Section title="Rewards">
@@ -86,14 +111,14 @@ const RewardsSummary = () => {
             >
                 Modify rewards
             </Button>
-            {completedReward && (
+            {currentCompletedReward && (
                 <CongratulationsModal
-                    visible={!!completedReward}
+                    visible={!!currentCompletedReward}
                     onClose={handleCloseModal}
                     userName={user.name}
-                    rewardTitle={completedReward.title}
-                    rewardId={completedReward._id}
-                    rewardCreatedAt={completedReward.createdAt}
+                    rewardTitle={currentCompletedReward.title}
+                    rewardId={currentCompletedReward._id}
+                    rewardCreatedAt={currentCompletedReward.createdAt}
                 />
             )}
         </Section>

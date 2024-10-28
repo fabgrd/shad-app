@@ -33,17 +33,20 @@ const CheckList = ({ taskList }: CheckListProps) => {
   const navigation = useNavigation<NavigationProps['navigation']>();
   const currentDay = <Moment element={Text} format="ddd DD MMM">{new Date()}</Moment>;
   const { LIGHT_BLUE, LIGHT_BLACK } = colors;
+  const [checkTask] = useCheckTaskMutation();
 
-  const { data: routine, isLoading } = useGetRoutineQuery(undefined, {
+  const { refetch } = useGetRoutineQuery(undefined, {
     refetchOnReconnect: true,
-    // refetchOnWindowFocus: true,
     refetchOnMountOrArgChange: true,
   });
-  const [checkTask] = useCheckTaskMutation();
-  // const { data: routine, refetch } = useGetRoutineQuery();
+  useEffect(() => {
+    console.log("REFETCH ROUTINE DATA");
+    refetch();
+  }, [refetch]);
+
   return (
     <Section title="Routine Check-list">
-        <Text style={styles.dateText}>{currentDay}</Text>
+      <Text style={styles.dateText}>{currentDay}</Text>
       <View style={styles.container}>
         {taskList?.map((task, index) => (
           <View style={styles.taskContainer} key={index}>

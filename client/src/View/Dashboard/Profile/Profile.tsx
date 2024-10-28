@@ -19,7 +19,6 @@ const Profile = (navigation: NavigationProps) => {
   const user = useSelector((state: any) => state.user.user)
   const tabBarHeight = useBottomTabBarHeight()
 
-  console.log(user)
   return (
     <ScrollView
       style={{

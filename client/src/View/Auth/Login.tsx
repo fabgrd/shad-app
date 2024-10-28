@@ -23,7 +23,6 @@ export default function Login({ navigation }: any) {
       "password": password,
     })
       .then((res: any) => {
-        console.log("res: ", res);
         if (res?.error) {
           console.log(res.error.data.error);
           setError(res.error.data.error);

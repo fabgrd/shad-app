@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 // Components
 import Section from '../../components/Dashboard/Section'
@@ -12,6 +12,8 @@ import Moment from 'react-moment';
 // Type
 import type { NavigationProps } from '../../types/Props/NavigationProps';
 import type { User } from '../../types/User'
+
+import { useGetRoutineQuery } from '../../redux/services/routine';
 
 type DailyRoutineProps = {
     user: User,
@@ -35,6 +37,13 @@ const DailyRoutine = ({ user, navigation, route }: DailyRoutineProps) => {
     const minutesLeft = duration.minutes();
 
     const routineIsCompleted = user?.routine?.tasks?.every(task => task.completed);
+    const { refetch } = useGetRoutineQuery(undefined, {
+        refetchOnReconnect: true,
+        refetchOnMountOrArgChange: true,
+    });
+    useEffect(() => {
+        refetch();
+    }, [refetch]);
 
     return (
         <Section

@@ -32,28 +32,54 @@ const GoalsSummary = () => {
     });
     const user = useSelector((state: any) => state?.user?.user);
     const goals = user?.goals || [];
-    const [completedGoal, setCompletedGoal] = useState<Goal | null>(null);
-
+    const [completedGoals, setCompletedGoals] = useState<Goal[]>([]);
+    const [currentGoalIndex, setCurrentGoalIndex] = useState<number>(0);
+    const [processedGoalIds, setProcessedGoalIds] = useState<Set<string>>(new Set());
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    
     useEffect(() => {
         refetch();
     }, [refetch]);
-
+    
     useEffect(() => {
-        const goalWithZeroDays = goals.find((goal: Goal) => {
-            const now = moment();
-            const objective = moment(goal.remainingDays);
-            const days = objective.diff(now, "days");
-            return days <= 0;
-        });
+        if (completedGoals.length === 0) {
+            const goalsWithZeroDays = goals.filter((goal: Goal) => {
+                const now = moment();
+                const objective = moment(goal.remainingDays);
+                const days = objective.diff(now, "days");
+                return days <= 0 && !processedGoalIds.has(goal._id);
+            });
 
-        if (goalWithZeroDays) {
-            setCompletedGoal(goalWithZeroDays);
+            if (goalsWithZeroDays.length > 0) {
+                setCompletedGoals(goalsWithZeroDays);
+                setCurrentGoalIndex(0);
+                setIsModalVisible(true);
+                console.log("___LOOP", goalsWithZeroDays.length, "new goals found");
+            }
         }
-    }, [goals]);
+    }, [goals, processedGoalIds]);
 
     const handleCloseModal = () => {
-        setCompletedGoal(null);
+        const currentGoal = completedGoals[currentGoalIndex];
+        setIsModalVisible(false);
+        
+        if (currentGoal) {
+            setProcessedGoalIds(prev => new Set([...prev, currentGoal._id]));
+        }
+
+        if (currentGoalIndex < completedGoals.length - 1) {
+            setTimeout(() => {
+                setCurrentGoalIndex(prev => prev + 1);
+                setIsModalVisible(true);
+            }, 300);
+        } else {
+            setCompletedGoals([]);
+            setCurrentGoalIndex(0);
+        }
     };
+
+    const currentCompletedGoal = completedGoals[currentGoalIndex];
+
 
     return (
         <Section title="Goals">
@@ -84,14 +110,14 @@ const GoalsSummary = () => {
             >
                 Modify goals
             </Button>
-            {completedGoal && (
+            {currentCompletedGoal && (
                 <CongratulationsModalForGoals
-                    visible={!!completedGoal}
+                    visible={isModalVisible}
                     onClose={handleCloseModal}
                     userName={user.name}
-                    goalTitle={completedGoal.goal}
-                    goalId={completedGoal._id}
-                    goalCreatedAt={completedGoal.createdAt}
+                    goalTitle={currentCompletedGoal.goal}
+                    goalId={currentCompletedGoal._id}
+                    goalCreatedAt={currentCompletedGoal.createdAt}
                 />
             )}
         </Section>
