@@ -1,0 +1,40 @@
+import Leagues from '../../../../server/src/models/League';
+import User from '../../../../server/src/models/User';
+
+// Fonction pour créer des utilisateurs mockés
+async function createMockUsers(leagueId: string) {
+    const users = [];
+    for (let i = 0; i < 20; i++) {
+        const user = await User.create({
+            name: `User ${leagueId}-${i + 1}`,
+            leagueScore: Math.floor(Math.random() * 100), // Score aléatoire
+            currentLeague: leagueId,
+            achievements: Array(14).fill(0),
+        });
+        users.push(user._id);
+    }
+    return users;
+}
+
+// Fonction pour créer des ligues avec des utilisateurs
+async function createMockLeagues() {
+    const leagueNames = ["Worm", "Cockroach", "Fly", "Bee", "Bumblebee"];
+    const leagues = [];
+
+    for (const name of leagueNames) {
+        const users = await createMockUsers(name);
+        const league = await Leagues.create({
+            name: name,
+            members: users,
+            icon: name.toLowerCase(),
+            resetDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 semaine à partir de maintenant
+        });
+        leagues.push(league);
+    }
+
+    console.log('Leagues created:', leagues);
+}
+
+createMockLeagues()
+    .then(() => console.log('Mock leagues created successfully'))
+    .catch((error) => console.error('Error creating mock leagues:', error));

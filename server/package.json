@@ -13,6 +13,7 @@
     "ts-node-server": "ts-node src/server.ts",
     "start": "node dist/src/server.js",
     "test": "jest",
+    "test:leagues": "jest leagueSystem.test.ts --detectOpenHandles",
     "fix-lint": "./node_modules/eslint/bin/eslint.js  src --ext .ts --fix"
   },
   "dependencies": {
@@ -35,7 +36,7 @@
     "@types/compression": "1.7.2",
     "@types/express": "4.17.15",
     "@types/hapi__joi": "17.1.9",
-    "@types/jest": "29.2.5",
+    "@types/jest": "^29.2.5",
     "@types/node": "18.11.18",
     "@types/node-cron": "^3.0.7",
     "@types/supertest": "2.0.12",

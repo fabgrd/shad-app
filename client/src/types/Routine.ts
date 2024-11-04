@@ -7,5 +7,4 @@ export type Routine = {
     tasks: RoutineTask[];
     cheatDay: boolean;
     finished: Date | null;
-    cigaretteSmoked: number;
 };

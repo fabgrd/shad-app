@@ -62,7 +62,7 @@ const LeagueLeaderboard = (navigation: NavigationProps) => {
           fontWeight: 'bold',
           marginBottom: 10,
         }}
-      >Top 3 advance to the next league</Text>
+      >Top 10 advance to the next league</Text>
       <Text
         style={{
           fontSize: 15,
