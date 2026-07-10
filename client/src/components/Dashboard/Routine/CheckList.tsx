@@ -59,7 +59,7 @@ const CheckList = ({ taskList }: CheckListProps) => {
               fillColor={LIGHT_BLUE}
               disabled={task.completed}
               isChecked={task?.completed}
-              unfillColor="white"
+              unFillColor="white"
               iconStyle={{ borderColor: 'red' }}
               innerIconStyle={{ borderWidth: 2 }}
               textStyle={{ fontFamily: 'Roboto' }}

@@ -4,10 +4,7 @@ export type LoginBody = {
 };
 
 export type RegisterBody = {
-    username: string;
-    pseudo: string;
+    name: string;
     email: string;
     password: string;
-    genre: string;
-    birthDate: string;
 };

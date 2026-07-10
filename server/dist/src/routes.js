@@ -33,6 +33,7 @@ const UserController = __importStar(require("./controllers/user"));
 const RoutineController = __importStar(require("./controllers/routine"));
 const RewardsController = __importStar(require("./controllers/rewards"));
 const GoalsController = __importStar(require("./controllers/goals"));
+const LeagueController = __importStar(require("./controllers/leagues"));
 const swaggerUiOptions = {
     customCss: '.swagger-ui .topbar { display: none }',
 };
@@ -42,6 +43,12 @@ router.post('/user/register', UserController.register);
 router.post('/user/login', UserController.login);
 router.post('/user/refresh', UserController.refresh);
 router.post('/user/', UserController.getUser);
+// league routes
+router.get('/leagues/:id', LeagueController.getLeagueById);
+router.post('/leagues/:id/member', LeagueController.addMemberToLeague);
+router.patch('/leagues/:id/member/:userId', LeagueController.updateMemberScore);
+router.delete('/leagues/:id/member/:userId', LeagueController.deleteMemberFromLeague);
+router.post('/leagues/create', LeagueController.createLeague);
 // routine routes
 router.post('/routine/add', RoutineController.addTasks);
 router.delete('/routine/delete', RoutineController.removeTasks);

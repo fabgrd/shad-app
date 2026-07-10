@@ -43,7 +43,7 @@ app.use(
 app.use(routes);
 
 // League cron job
-leagueCron();
+// leagueCron();
 dailyResetCron();
 
 app.use(

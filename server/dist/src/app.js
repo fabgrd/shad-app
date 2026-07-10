@@ -9,7 +9,6 @@ const path_1 = __importDefault(require("path"));
 const express_1 = __importDefault(require("express"));
 const routes_1 = __importDefault(require("./routes"));
 const logger_1 = __importDefault(require("./logger"));
-const LeagueCron_1 = __importDefault(require("./Utils/LeagueCron"));
 const DailyResetCron_1 = __importDefault(require("./Utils/DailyResetCron"));
 const app = (0, express_1.default)();
 function logResponseTime(req, res, next) {
@@ -33,7 +32,7 @@ app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use(express_1.default.static(path_1.default.join(__dirname, 'public'), { maxAge: 31557600000 }));
 app.use(routes_1.default);
 // League cron job
-(0, LeagueCron_1.default)();
+// leagueCron();
 (0, DailyResetCron_1.default)();
 app.use((err, req, res, next) => {
     if (res.headersSent) {

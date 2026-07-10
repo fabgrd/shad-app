@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import mongoose from 'mongoose';
 import User from '../models/User';
-import League from '../models/League';
+import League from '../models/Leagues';
 import { MOCK_USER_1, MOCK_USER_2 } from '../MOCK/MOCK_USER';
 
 // Fonction pour générer les utilisateurs mockés
@@ -14,7 +14,7 @@ const generateMockUsers = (baseUser: any, count: number, leagueLevel: number) =>
         password: baseUser.password,
         currentLeague: leagueLevel,
         leagueScore: Math.floor(Math.random() * 100),
-        achievements: Array(14).fill(0),
+        achievements: Array(4).fill(0),
         streak: 0,
         lastStreak: 0,
         lastStreakDate: new Date(),
@@ -26,31 +26,41 @@ const generateMockUsers = (baseUser: any, count: number, leagueLevel: number) =>
     }));
 };
 
-const ensureLeagueCapacity = async (level: number) => {
+const ensureLeagueCapacity = async (level: number, userId: string) => {
     console.log(`🔍 Checking leagues at level ${level} for available space...`);
 
-    // Récupère les ligues du niveau spécifié, ordonnées par date de création
+    // D'abord, vérifions si l'utilisateur est déjà dans une ligue de ce niveau
+    const existingLeague = await League.findOne({
+        level: level,
+        members: userId
+    });
+
+    if (existingLeague) {
+        console.log(`⚠️ User ${userId} is already in league ${existingLeague._id} at level ${level}`);
+        return existingLeague;
+    }
+
+    // Chercher une ligue avec de la place
     const leagues = await League.find({ level }).sort({ createdAt: 1 });
     console.log(`📋 Found ${leagues.length} leagues at level ${level}`);
 
-    for (const league of leagues) {
-        console.log(`➡️ Checking league ${league._id} with ${league.members.length} members`);
-        if (league.members.length < 20) {
-            console.log(`✅ League ${league._id} has space. Returning this league.`);
-            return league;
-        }
+    // Chercher une ligue non pleine
+    const availableLeague = leagues.find(league => league.members.length < 20);
+    if (availableLeague) {
+        console.log(`✅ Found available league ${availableLeague._id}`);
+        return availableLeague;
     }
 
-    console.log(`🚀 No available leagues at level ${level}. Creating a new league...`);
+    // Créer une nouvelle ligue si nécessaire
+    console.log(`🚀 Creating new league at level ${level}`);
     const newLeague = new League({
-        name: `League ${level} - ${leagues.length + 1}`, // Numéro pour différencier les ligues
+        name: `League ${level} - ${leagues.length + 1}`,
         members: [],
         icon: "default_icon.png",
         resetDate: new Date(),
         level,
     });
     await newLeague.save();
-    console.log(`🎉 New league created with ID ${newLeague._id} at level ${level}`);
     return newLeague;
 };
 
@@ -63,20 +73,21 @@ const processLeagues = async () => {
         if (allUsers.length < 20) {
             console.log('⚠️ Not enough users in DB, adding mock users');
             const mockUsers = [
-                ...generateMockUsers(MOCK_USER_1, 10, 0),
-                ...generateMockUsers(MOCK_USER_2, 10, 0),
+                ...generateMockUsers(MOCK_USER_1, 25, 0),
+                ...generateMockUsers(MOCK_USER_2, 25, 0),
             ];
             await User.insertMany(mockUsers);
             allUsers = await User.find(); 
             console.log(`🎉 Added ${mockUsers.length} mock users to the database`);
         }
 
+        await League.deleteMany({ members: { $size: 0 } });
+        
         for (let level = 0; level <= 4; level++) {
             const usersInLeague = allUsers.filter(user => user.currentLeague === level);
             if (usersInLeague.length === 0) continue;
 
             console.log(`\n🏆 Processing League Level ${level} with ${usersInLeague.length} users`);
-
             const leaderboard = usersInLeague.map((user) => ({
                 _id: user._id,
                 name: user.name,
@@ -96,7 +107,14 @@ const processLeagues = async () => {
                     userToUpdate.currentLeague += 1;
                     userToUpdate.leagueScore = 0;
 
-                    const league = await ensureLeagueCapacity(userToUpdate.currentLeague);
+                    // Remove user from previous league
+                    const leagueToLeave = await League.findOne({ level: userToUpdate.currentLeague - 1 });
+                    if (leagueToLeave) {
+                        leagueToLeave.members = leagueToLeave.members.filter(memberId => memberId.toString() !== userToUpdate._id.toString());
+                        await leagueToLeave.save();
+                    }
+
+                    const league = await ensureLeagueCapacity(userToUpdate.currentLeague, userToUpdate._id);
                     if (league) {
                         league.members.push(userToUpdate._id.toString());
                         await league.save();
@@ -107,6 +125,7 @@ const processLeagues = async () => {
                 } else {
                     console.log(`ℹ️ ${userToUpdate ? userToUpdate.name : 'User'} is already at the highest league or not found`);
                 }
+                await League.deleteMany({ members: { $size: 0 } });
             }));
 
             console.log(`\n🔽 Relegating bottom 5 users from League ${level}`);
@@ -117,7 +136,14 @@ const processLeagues = async () => {
                     userToUpdate.currentLeague -= 1;
                     userToUpdate.leagueScore = 0;
 
-                    const league = await ensureLeagueCapacity(userToUpdate.currentLeague);
+                    // Remove user from previous league
+                    const leagueToLeave = await League.findOne({ level: userToUpdate.currentLeague + 1 });
+                    if (leagueToLeave) {
+                        leagueToLeave.members = leagueToLeave.members.filter(memberId => memberId.toString() !== userToUpdate._id.toString());
+                        await leagueToLeave.save();
+                    }
+
+                    const league = await ensureLeagueCapacity(userToUpdate.currentLeague, userToUpdate._id);
                     if (league) {
                         league.members.push(userToUpdate._id.toString());
                         await league.save();
@@ -128,6 +154,7 @@ const processLeagues = async () => {
                 } else {
                     console.log(`ℹ️ ${userToUpdate ? userToUpdate.name : 'User'} is already at the lowest league or not found`);
                 }
+                await League.deleteMany({ members: { $size: 0 } });
             }));
         }
 

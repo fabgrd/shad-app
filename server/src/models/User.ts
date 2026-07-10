@@ -13,8 +13,8 @@ export interface IUser extends Document {
     name: string;
     email: string;
     password: string;
-    genre: string;
-    birthDate: Date;
+    genre?: string;
+    birthDate?: Date;
     routine: IRoutine;
     refreshToken: string;
     streak: number;
@@ -37,8 +37,8 @@ const schema = new Schema<IUser>({
     name: { type: String, index: true, required: true },
     email: { type: String, index: true, required: true },
     password: { type: String, index: true, required: true },
-    genre: { type: String, index: true, required: true },
-    birthDate: { type: Date, index: true, required: true },
+    genre: { type: String, index: true, required: false },
+    birthDate: { type: Date, index: true, required: false },
     streak: { type: Number, index: true, required: true },
     currentLeague: { type: Number, index: true, required: true },
     achievements: { type: [Number], index: true, required: true },

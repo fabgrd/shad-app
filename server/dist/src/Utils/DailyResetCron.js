@@ -16,8 +16,8 @@ const node_cron_1 = __importDefault(require("node-cron"));
 const User_1 = __importDefault(require("../models/User"));
 const RoutineTasks_1 = __importDefault(require("../models/RoutineTasks"));
 const dailyResetCron = () => __awaiter(void 0, void 0, void 0, function* () {
-    node_cron_1.default.schedule('0 0 * * *', () => __awaiter(void 0, void 0, void 0, function* () {
-        console.log('Running daily reset cron job');
+    node_cron_1.default.schedule('* * * * *', () => __awaiter(void 0, void 0, void 0, function* () {
+        console.log('------ Running daily reset cron job');
         const users = yield User_1.default.find().populate('routine');
         for (const user of users) {
             if (user.routine) {

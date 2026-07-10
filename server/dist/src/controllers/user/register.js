@@ -19,16 +19,13 @@ const User_1 = __importDefault(require("../../models/User"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = require("jsonwebtoken");
 exports.registerSchema = joi_1.default.object().keys({
-    username: joi_1.default.string().required(),
     name: joi_1.default.string().required(),
-    email: joi_1.default.string().required(),
-    password: joi_1.default.string().required(),
-    genre: joi_1.default.string().required(),
-    birthDate: joi_1.default.string().required(),
+    email: joi_1.default.string().email().required(),
+    password: joi_1.default.string().min(6).required(),
 });
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
-    const { username, name, email, password, genre, birthDate } = req.body;
+    const { name, email, password } = req.body;
     // Check if the user already exists
     const EmailExist = yield User_1.default.findOne({ email });
     if (EmailExist) {
@@ -39,20 +36,22 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Hash the password
     const salt = yield bcrypt_1.default.genSalt(10);
     const hashedPassword = yield bcrypt_1.default.hash(password, salt);
+    // Derive a display handle from the email local-part (onboarding no longer
+    // asks for a username). Suffix kept short to reduce collisions.
+    const base = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '') || 'user';
+    const username = `${base}_${Math.random().toString(36).slice(2, 6)}`;
     // Create a new user with default values for required fields
     const user = new User_1.default({
         username,
         name,
         email,
         password: hashedPassword,
-        genre,
-        birthDate,
         refreshToken: '',
         streak: 0,
         currentLeague: 0,
         achievements: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         previousRoutineEnding: [],
-        leagueScore: 0, // Add leagueScore with a default value
+        leagueScore: 83,
     });
     yield user.save();
     // Generate JWT tokens

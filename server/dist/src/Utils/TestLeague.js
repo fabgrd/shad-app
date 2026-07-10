@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.processLeaguePromotionsRelegations = exports.createMockLeagues = void 0;
-const League_1 = __importDefault(require("../models/League"));
+const Leagues_1 = __importDefault(require("../models/Leagues"));
 const User_1 = __importDefault(require("../models/User"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const LEAGUE_NAMES = [
@@ -54,7 +54,7 @@ function createMockUsers(leagueId, leagueLevel) {
 function processLeaguePromotionsRelegations() {
     return __awaiter(this, void 0, void 0, function* () {
         for (let leagueLevel = 0; leagueLevel < LEAGUE_NAMES.length; leagueLevel++) {
-            const league = yield League_1.default.findOne({ level: leagueLevel });
+            const league = yield Leagues_1.default.findOne({ level: leagueLevel });
             if (!league)
                 continue;
             // Récupérer tous les utilisateurs de la ligue
@@ -86,12 +86,12 @@ exports.processLeaguePromotionsRelegations = processLeaguePromotionsRelegations;
 function createMockLeagues() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield League_1.default.deleteMany({});
+            yield Leagues_1.default.deleteMany({});
             yield User_1.default.deleteMany({});
             const leagues = []; // Définition explicite du type
             for (let i = 0; i < LEAGUE_NAMES.length; i++) {
                 const users = yield createMockUsers(LEAGUE_NAMES[i], i);
-                const league = yield League_1.default.create({
+                const league = yield Leagues_1.default.create({
                     name: LEAGUE_NAMES[i],
                     members: users,
                     icon: LEAGUE_NAMES[i].toLowerCase(),
@@ -112,7 +112,7 @@ function createMockLeagues() {
 exports.createMockLeagues = createMockLeagues;
 // Exécution si appelé directement
 if (require.main === module) {
-    mongoose_1.default.connect('https://81e6-163-5-23-109.ngrok-free.app')
+    mongoose_1.default.connect('mongodb+srv://shad_user:OAuWog0JvESB9I8a@shad.gjywb7d.mongodb.net/')
         .then(() => createMockLeagues())
         .then(() => {
         console.log('Mock leagues created successfully');

@@ -1,25 +1,18 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import React from 'react'
 import Input, { InputProps } from './Input'
+import { space } from '../../styles/theme'
 
-type FormInput = {
+type FormInputProps = {
     input: InputProps
     label: string
+    error?: string
 }
 
-export default function FormInput(
-    {
-        input,
-        label,
-        ...props
-    }: FormInput) {
+export default function FormInput({ input, label, error }: FormInputProps) {
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>{label}</Text>
-            <Input
-                {...input}
-                {...props}
-            />
+            <Input {...input} label={label} error={error ?? input.error} />
         </View>
     )
 }
@@ -27,11 +20,6 @@ export default function FormInput(
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        marginBottom: 20,
+        marginBottom: space.xl,
     },
-    label: {
-        fontFamily: 'Roboto-Light',
-        fontSize: 16,
-        marginBottom: 10,
-    }
-});
+})

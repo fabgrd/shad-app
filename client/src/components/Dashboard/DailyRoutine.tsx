@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 // Components
 import Section from '../../components/Dashboard/Section'
@@ -22,28 +22,36 @@ type DailyRoutineProps = {
 }
 
 const DailyRoutine = ({ user, navigation, route }: DailyRoutineProps) => {
-    const currentTime = moment();
-    const deadlineTime = typeof user?.routine?.deadline === 'string' ? user?.routine?.deadline : '00:00';
-    const deadlineMoment = moment(deadlineTime, 'HH:mm'); // Parse the deadline string into a moment object
-    
-    let timeDiff = deadlineMoment.diff(currentTime);
-    if (timeDiff < 0) {
-        // If the deadline has passed, add 24 hours
-        timeDiff += 24 * 60 * 60 * 1000;
-    }
+    const [currentTime, setCurrentTime] = useState(moment());
+    const [deadlineTime, setDeadlineTime] = useState(typeof user?.routine?.deadline === 'string' ? user?.routine?.deadline : '00:00');
+    const [timeDiff, setTimeDiff] = useState(0);
+    const [hoursLeft, setHoursLeft] = useState(0);
+    const [minutesLeft, setMinutesLeft] = useState(0);
+    const [routineIsCompleted, setRoutineIsCompleted] = useState(user?.routine?.tasks?.every(task => task.completed));
 
-    const duration = moment.duration(timeDiff);
-    const hoursLeft = Math.floor(duration.asHours());
-    const minutesLeft = duration.minutes();
-
-    const routineIsCompleted = user?.routine?.tasks?.every(task => task.completed);
     const { refetch } = useGetRoutineQuery(undefined, {
         refetchOnReconnect: true,
         refetchOnMountOrArgChange: true,
+        refetchOnFocus: true,
     });
     useEffect(() => {
-        refetch();
-    }, [refetch]);
+        const interval = setInterval(() => {
+            console.log("---------REFETCH DANS DAILY ROUTINE");
+            refetch();
+            setCurrentTime(moment());
+            const deadlineMoment = moment(deadlineTime, 'HH:mm');
+            let diff = deadlineMoment.diff(currentTime);
+            if (diff < 0) {
+                diff += 24 * 60 * 60 * 1000;
+            }
+            setTimeDiff(diff);
+            const duration = moment.duration(diff);
+            setHoursLeft(Math.floor(duration.asHours()));
+            setMinutesLeft(duration.minutes());
+            setRoutineIsCompleted(user?.routine?.tasks?.every(task => task.completed));
+        }, 60 * 1000);
+        return () => clearInterval(interval);
+    }, [refetch, user, deadlineTime]);
 
     return (
         <Section

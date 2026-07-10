@@ -1,17 +1,19 @@
+// Legacy color keys remapped onto the Shad design system (sky-blue / slate).
+// Keeping the original key names lets every existing screen pick up the new
+// palette with zero call-site changes. New code should import ../styles/theme.
 const colors = {
-    LIGHT_BLUE: 'rgba(98, 0, 238, 0.6)',     // Version plus claire du violet principal
-    BLUE: '#6200EE',                         // Violet pétant comme couleur principale
-    LIGHTER_BLUE: 'rgba(98, 0, 238, 0.15)',  // Version très légère du violet principal
-    LIGHT_GRAY: '#757575',                   // Gris clair inchangé
-    GRAY: '#BDBDBD',                         // Gris inchangé
-    LIGHT_BLACK: 'rgba(33, 33, 33, 0.6)',    // Noir léger inchangé
+    LIGHT_BLUE: '#44B0FF',                    // sky-400
+    BLUE: '#1DA0FF',                          // sky-500 — primary accent
+    LIGHTER_BLUE: '#D2ECFF',                  // sky-100 — soft accent fill
+    LIGHT_GRAY: '#74828A',                    // slate-500
+    GRAY: '#C4CCD0',                          // slate-300
+    LIGHT_BLACK: 'rgba(24, 36, 42, 0.6)',     // slate ink @ 60%
 
-    // Couleurs additionnelles (si vous voulez les utiliser)
-    DEEP_PURPLE: '#3700B3',                  // Violet plus foncé pour les contrastes
-    ACCENT: '#03DAC6',                       // Turquoise pour les accents (complémentaire du violet)
-    SUCCESS: '#00C853',                      // Vert pour les succès/validations
-    WARNING: '#FFD600',                      // Jaune vif pour les avertissements
-    BACKGROUND: '#F3E5F5',                   // Violet très pâle pour les fonds
+    DEEP_PURPLE: '#0C68AD',                   // sky-700 (kept name for compat)
+    ACCENT: '#2A9C63',                        // sage-500 — secondary accent
+    SUCCESS: '#2FB67C',                       // green-500
+    WARNING: '#F5A524',                       // amber-500
+    BACKGROUND: '#F6F9FA',                    // slate-50 — app canvas
 }
 
 export default colors;

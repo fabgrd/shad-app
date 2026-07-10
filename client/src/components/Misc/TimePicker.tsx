@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Button } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
-const TimePicker = (): JSX.Element => {
+const TimePicker = (): React.JSX.Element => {
   const [time, setTime] = useState(new Date());
   const [show, setShow] = useState<boolean>(false);
 

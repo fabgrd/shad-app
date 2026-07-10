@@ -1,114 +1,135 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View, Keyboard, KeyboardAvoidingView, TouchableWithoutFeedback, Platform } from 'react-native';
+import React, { useState } from 'react'
+import { View, Text, Pressable, StyleSheet } from 'react-native'
+import { useDispatch } from 'react-redux'
 
-// Components
-import Button from '../../components/Misc/Button';
-import ProgressBar from '../../components/Onboarding/ProgressBar';
-import OnboardingGoals from '../../components/Onboarding/OnboardingGoal';
+import OnboardingScaffold from '../../components/Onboarding/OnboardingScaffold'
+import ChipSelector from '../../components/Onboarding/ChipSelector'
+import { useCreateRoutineMutation } from '../../redux/services/routine'
+import { colors, radius, space, fontSize, font } from '../../styles/theme'
 
-// Images
-import ImageLearning from '../../../assets/images/Onboarding/ImageLearning';
-import ImageReading from '../../../assets/images/Onboarding/ImageReading';
+const TEMPLATES = [
+    'Read 10 pages',
+    'Meditate',
+    'Run 20 min',
+    'Learn something new',
+    'Listen to a podcast',
+    'No phone after 10pm',
+]
 
 export default function StepTwo({ navigation }: any) {
+    const dispatch = useDispatch()
+    const [createRoutine] = useCreateRoutineMutation()
 
-  return (
-    <KeyboardAvoidingView style={styles.wrapper} behavior="padding">
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <ProgressBar
-              current={2}
-              total={4}
-            />
-            <Text style={styles.title}>First, choose your daily checklist.</Text>
-          </View>
-          <View style={styles.formContainer}>
-            <View style={styles.goalContainer}>
-              <OnboardingGoals
-                Image={ImageLearning}
-                goal="Today, I learn something new ..."
-              />
-              <OnboardingGoals
-                Image={ImageReading}
-                goal="Today, I read ... pages of a book."
-                reverse
-              />
-              <View
-                style={{
-                  width: '100%',
-                  alignItems: 'center',
-                  flexDirection: 'row',
-                  justifyContent: 'space-evenly',
-                }}
-              >
-                <Button
-                  primary={false}
-                  style={{ width: '45%' }}
-                  onClick={() => navigation.navigate('Onboarding', { screen: Platform.OS === 'ios' ? 'StepThreeIOS' : 'StepThreeAndroid' })}
-                >
-                  Add my own template
-                </Button>
-              </View>
+    const [selected, setSelected] = useState<string[]>(['Read 10 pages', 'Meditate'])
+    const [custom, setCustom] = useState<string[]>([])
+    const [loading, setLoading] = useState(false)
+
+    const toggle = (t: string) =>
+        setSelected((s) => (s.includes(t) ? s.filter((x) => x !== t) : [...s, t]))
+
+    // Custom activities added via the input are always part of the checklist.
+    const setCustomList = (list: string[]) => {
+        setCustom(list)
+        setSelected((s) => {
+            const withoutOldCustom = s.filter((x) => TEMPLATES.includes(x) || list.includes(x))
+            const added = list.filter((x) => !withoutOldCustom.includes(x))
+            return [...withoutOldCustom, ...added]
+        })
+    }
+
+    const activities = Array.from(new Set(selected))
+    const canContinue = activities.length > 0
+
+    const handleContinue = async () => {
+        if (!canContinue) return
+
+        dispatch({
+            type: 'onboarding/updateStepTwoData',
+            payload: { routineActivities: activities, routineDeadline: '', allowNotifications: false },
+        })
+
+        // Default the routine deadline to the end of today.
+        const deadline = new Date()
+        deadline.setHours(23, 59, 0, 0)
+
+        const tasks = activities.map((title) => ({ title, score: 10, completed: false }))
+
+        setLoading(true)
+        try {
+            await createRoutine({ deadline, cheatDay: false, completed: false, tasks }).unwrap()
+        } catch (err) {
+            console.log(err)
+        } finally {
+            setLoading(false)
+        }
+
+        navigation.navigate('Onboarding', { screen: 'StepReward' })
+    }
+
+    return (
+        <OnboardingScaffold
+            step={2}
+            total={3}
+            title="Choose your daily checklist"
+            subtitle="Pick a few to start — you can change these anytime."
+            ctaLabel="Continue"
+            onCta={handleContinue}
+            ctaDisabled={!canContinue}
+            ctaLoading={loading}
+            onBack={() => navigation.goBack()}
+        >
+            <View style={styles.chips}>
+                {TEMPLATES.map((t) => {
+                    const active = selected.includes(t)
+                    return (
+                        <Pressable
+                            key={t}
+                            onPress={() => toggle(t)}
+                            style={[styles.chip, active && styles.chipActive]}
+                        >
+                            <Text style={[styles.chipText, active && styles.chipTextActive]}>{t}</Text>
+                        </Pressable>
+                    )
+                })}
             </View>
-          </View>
-          <Button
-            onClick={() => navigation.navigate('Onboarding', { screen: Platform.OS === 'ios' ? 'StepFourIOS' : 'StepFourAndroid' })}
-          >
-            Continue
-          </Button>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView >
-  );
+
+            <Text style={styles.addLabel}>Add your own</Text>
+            <ChipSelector chipList={custom} setChipList={setCustomList} placeholder="Add your own activity" />
+        </OnboardingScaffold>
+    )
 }
 
 const styles = StyleSheet.create({
-  header: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '15%',
-  },
-  wrapper: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  container: {
-    flex: 1,
-    width: '90%',
-    height: '90%',
-    alignItems: 'center',
-  },
-  title: {
-    fontFamily: 'Roboto-Bold',
-    fontSize: 20,
-    marginVertical: 20,
-    textAlign: 'center',
-  },
-  caption: {
-    fontFamily: 'Roboto-Light',
-    fontSize: 15,
-    marginBottom: 20,
-    opacity: 0.3,
-    textTransform: 'uppercase',
-  },
-  loginContainer: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  formContainer: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    height: '75%',
-  },
-  goalContainer: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  }
-});
+    chips: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: space.sm,
+    },
+    chip: {
+        paddingVertical: space.md,
+        paddingHorizontal: space.lg,
+        borderRadius: radius.pill,
+        backgroundColor: colors.surface,
+        borderWidth: 1.5,
+        borderColor: colors.border,
+    },
+    chipActive: {
+        backgroundColor: colors.accentSoft,
+        borderColor: colors.accent,
+    },
+    chipText: {
+        fontFamily: font.bold,
+        fontWeight: '600',
+        fontSize: fontSize.label,
+        color: colors.textSecondary,
+    },
+    chipTextActive: { color: colors.accentText },
+    addLabel: {
+        fontFamily: font.bold,
+        fontWeight: '600',
+        fontSize: fontSize.label,
+        color: colors.textPrimary,
+        marginTop: space.xxl,
+        marginBottom: space.md,
+    },
+})

@@ -7,25 +7,19 @@ import bcrypt from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 
 export const registerSchema = Joi.object().keys({
-    username: Joi.string().required(),
     name: Joi.string().required(),
-    email: Joi.string().required(),
-    password: Joi.string().required(),
-    genre: Joi.string().required(),
-    birthDate: Joi.string().required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
 });
 
 interface RegisterReqBody {
-    username: string;
     name: string;
     email: string;
     password: string;
-    genre: string;
-    birthDate: string;
 }
 
 const register: RequestHandler = async (req: Request<{}, {}, RegisterReqBody>, res) => {
-    const { username, name, email, password, genre, birthDate } = req.body;
+    const { name, email, password } = req.body;
 
     // Check if the user already exists
     const EmailExist = await User.findOne({ email });
@@ -39,20 +33,23 @@ const register: RequestHandler = async (req: Request<{}, {}, RegisterReqBody>, r
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    // Derive a display handle from the email local-part (onboarding no longer
+    // asks for a username). Suffix kept short to reduce collisions.
+    const base = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '') || 'user';
+    const username = `${base}_${Math.random().toString(36).slice(2, 6)}`;
+
     // Create a new user with default values for required fields
     const user = new User({
         username,
         name,
         email,
         password: hashedPassword,
-        genre,
-        birthDate,
         refreshToken: '',
         streak: 0,
         currentLeague: 0,
         achievements: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         previousRoutineEnding: [],
-        leagueScore: 0, // Add leagueScore with a default value
+        leagueScore: 83,
     });
 
     await user.save();

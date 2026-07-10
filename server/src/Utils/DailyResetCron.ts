@@ -4,8 +4,8 @@ import Routine from '../models/Routine';
 import RoutineTasks from '../models/RoutineTasks';
 
 const dailyResetCron = async () => {
-    cron.schedule('0 0 * * *', async () => { // Run every day at midnight
-        console.log('Running daily reset cron job');
+    cron.schedule('* * * * *', async () => { // Run every day at midnight
+        console.log('------ Running daily reset cron job');
         const users = await User.find().populate('routine');
         
         for (const user of users) {
